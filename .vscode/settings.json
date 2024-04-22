@@ -51,5 +51,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "AppCoreTopDown.sln"
+    "dotnet.defaultSolution": "TopDown-Shooter.sln"
 }
