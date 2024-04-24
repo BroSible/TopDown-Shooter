@@ -12,7 +12,6 @@ public class BaseEnemy : MonoBehaviour
     [SerializeField] protected List<float> attackDistances;
     #endregion
     [SerializeField] protected List<AudioClip> audioClips;
-    
     public Transform _target;
     protected bool _isDead=false;
     protected Animator _animator;
@@ -25,6 +24,7 @@ public class BaseEnemy : MonoBehaviour
     [SerializeField] protected bool playerInSightRange, playerInAttackRange;
     [SerializeField] protected bool hasBeenTargeted;
     [SerializeField] protected float walkPointRange;
+    [SerializeField] protected float damage;
 
     protected virtual void Awake()
     {
@@ -98,7 +98,7 @@ public class BaseEnemy : MonoBehaviour
         }
     }
 
-     protected virtual void Patroling()
+    protected virtual void Patroling()
     {
         if(!isWalkPointSet)
         {
@@ -130,9 +130,8 @@ public class BaseEnemy : MonoBehaviour
         
         if(!isAlreadyAttacked)
         {
-            //Тут надо будет ещё атаку дописать 
-            //move.health -= 20;
-
+            Controller.TakeDamage(damage);
+            Debug.Log(Controller.playerHealth);
             isAlreadyAttacked = true;
             Invoke(nameof(ResetAttack),cooldowns[0]); 
         }
