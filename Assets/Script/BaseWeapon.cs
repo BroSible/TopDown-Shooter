@@ -40,7 +40,6 @@ public class BaseWeapon : MonoBehaviour
                 bulletRb.velocity = direction * 70f; // тут можно изменить скорость полёта пули
                 GameObject.Destroy(_bullet, 5f);
                 StartCoroutine("C_shoot");
-                Shoot();
                 timeSinceLastShot = 0f;
             }
 
@@ -61,16 +60,6 @@ public class BaseWeapon : MonoBehaviour
 
     }
 
-    private void Shoot()
-    {
-        if(Physics.Raycast(shotPoint.transform.position, shotPoint.transform.forward , out hit, distance))
-        {
-            if(hit.collider.CompareTag("Enemy"))
-            {
-                Debug.Log("Ты отпиздил дауна");
-            }
-        }
-    }
 
     private IEnumerator C_shoot()
     {
@@ -88,4 +77,6 @@ public class BaseWeapon : MonoBehaviour
         magazineSize = maxSizeMagazine;
         isReloading = false;
     }
+
+
 }

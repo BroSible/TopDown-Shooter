@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Callbacks;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -13,7 +14,7 @@ public class BaseEnemy : MonoBehaviour
     #endregion
     [SerializeField] protected List<AudioClip> audioClips;
     public Transform _target;
-    protected bool _isDead=false;
+    [SerializeField]  protected bool _isDead = false;
     protected Animator _animator;
     protected AudioSource _audioSource;
     protected NavMeshAgent _agent;
@@ -67,6 +68,11 @@ public class BaseEnemy : MonoBehaviour
             ChasePlayer();
             StartCoroutine(C_ResetFollowingPlayer());
         }
+
+        if(_isDead)
+        {
+            _agent.SetDestination(transform.position);
+        }
     }
 
     public virtual void TakeDamage(float damage)
@@ -83,6 +89,7 @@ public class BaseEnemy : MonoBehaviour
     public virtual IEnumerator C_OnDefeat()
     {
         yield return new WaitForSeconds(1f);
+        Destroy(gameObject);
     }
 
     protected virtual void SearchWalkPoint()
@@ -142,7 +149,7 @@ public class BaseEnemy : MonoBehaviour
         isAlreadyAttacked = false;
     }
 
-     public virtual IEnumerator C_ResetFollowingPlayer()
+    public virtual IEnumerator C_ResetFollowingPlayer()
     {
         yield return new WaitForSeconds(6f);
         hasBeenTargeted = false;
