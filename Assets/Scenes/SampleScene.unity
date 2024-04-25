@@ -1225,6 +1225,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc292a69ebe48bb44ad5ae62943420b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rotationSpeed: 4
 --- !u!1 &213637047
 GameObject:
   m_ObjectHideFlags: 0
@@ -1737,10 +1738,10 @@ RectTransform:
   - {fileID: 1886866775}
   m_Father: {fileID: 1824806557}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 45, y: 492}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchorMin: {x: 0, y: 0.8121852}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0.15875244, y: 6.45047}
+  m_SizeDelta: {x: -1900.4, y: -113.5816}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &467976602
 MonoBehaviour:
@@ -1963,10 +1964,10 @@ RectTransform:
   - {fileID: 1428287552}
   m_Father: {fileID: 1824806557}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -699.99976, y: -349}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchorMin: {x: 0.043520834, y: 0.15277779}
+  m_AnchorMax: {x: 0.22947916, y: 0.2}
+  m_AnchoredPosition: {x: -1.4996948, y: 0.5}
+  m_SizeDelta: {x: -197, y: -21}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &571369214
 MonoBehaviour:
@@ -2190,6 +2191,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pauseMenu: {fileID: 1824806554}
   isPaused: 0
+  cameraController: {fileID: 201751794}
+  baseWeapon: {fileID: 1827094326}
 --- !u!114 &809582945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2305,10 +2308,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1824806557}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -114, y: -526}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0.1092963}
+  m_AnchoredPosition: {x: -0.20874023, y: 1.1500244}
+  m_SizeDelta: {x: -1900.3, y: -61.415}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &908618594
 MonoBehaviour:
@@ -2715,6 +2718,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 201751788}
+  newPosition: {x: 0, y: 0, z: 0}
   targetOffset: {x: 0, y: 10, z: -4}
   movementSpeed: 10
 --- !u!1 &1133876218 stripped
@@ -3015,10 +3019,10 @@ RectTransform:
   - {fileID: 419397724}
   m_Father: {fileID: 1824806557}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -699.99976, y: -290}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchorMin: {x: 0.043520834, y: 0.20737039}
+  m_AnchorMax: {x: 0.22947916, y: 0.25640744}
+  m_AnchoredPosition: {x: -1.9996948, y: -0.5}
+  m_SizeDelta: {x: -198, y: -23}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1455519066
 MonoBehaviour:
@@ -3136,10 +3140,10 @@ RectTransform:
   - {fileID: 213637048}
   m_Father: {fileID: 1824806557}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -698.3203, y: -229}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchorMin: {x: 0.043520834, y: 0.26485187}
+  m_AnchorMax: {x: 0.22947916, y: 0.312}
+  m_AnchoredPosition: {x: -0.82025146, y: -0.5}
+  m_SizeDelta: {x: -197, y: -21}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1565751644
 MonoBehaviour:
@@ -3384,10 +3388,10 @@ RectTransform:
   - {fileID: 961206260}
   m_Father: {fileID: 1824806557}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -698, y: -173}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchorMin: {x: 0.044000003, y: 0.316}
+  m_AnchorMax: {x: 0.22947916, y: 0.363}
+  m_AnchoredPosition: {x: -0.5, y: 0.5}
+  m_SizeDelta: {x: -195, y: -21}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1685855801
 MonoBehaviour:
@@ -3413,7 +3417,7 @@ MonoBehaviour:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_SelectedColor: {r: 1, g: 1, b: 1, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -3561,14 +3565,25 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -2.573, y: 0}
+  m_SizeDelta: {x: 66.553, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!4 &1827094325 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4748372594567360372, guid: 6c8f7371675f8e641995230c66e89b1f, type: 3}
   m_PrefabInstance: {fileID: 1776556749688503657}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1827094326 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6736602606625751186, guid: 6c8f7371675f8e641995230c66e89b1f, type: 3}
+  m_PrefabInstance: {fileID: 1776556749688503657}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51a79cc66efae4447adee0bc8b2965e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1886866774
 GameObject:
   m_ObjectHideFlags: 0
@@ -3758,7 +3773,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 3f777aefc0bde3942a37fc18667dce12, type: 2}
     - target: {fileID: 919132149155446097, guid: af833ad7fd46a304d94e707ee5dfa828, type: 3}
       propertyPath: m_Name
-      value: BaseBUG
+      value: Beetle
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: af833ad7fd46a304d94e707ee5dfa828, type: 3}
       propertyPath: m_TagString
@@ -3839,7 +3854,7 @@ PrefabInstance:
     - target: {fileID: 6736602606625751186, guid: 6c8f7371675f8e641995230c66e89b1f, type: 3}
       propertyPath: bullet
       value: 
-      objectReference: {fileID: 4317752499368095659, guid: 25101839095e0564ea9dec6087e602fd, type: 3}
+      objectReference: {fileID: 2480094643124711189, guid: 25101839095e0564ea9dec6087e602fd, type: 3}
     - target: {fileID: 6736602606625751186, guid: 6c8f7371675f8e641995230c66e89b1f, type: 3}
       propertyPath: weaponDamage
       value: 10
