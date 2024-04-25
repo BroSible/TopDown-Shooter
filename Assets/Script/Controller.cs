@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class Controller : MonoBehaviour
 {
-    Rigidbody rb;
+    Rigidbody _rb;
     public bool isWalking;
     public Transform orientation;
     Vector3 movement;
-    Animator animator;
+    Animator _animator;
     public float health;
     public static float playerHealth;
     public float speed;
@@ -16,8 +16,8 @@ public class Controller : MonoBehaviour
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        animator = GetComponent<Animator>();
+        _rb = GetComponent<Rigidbody>();
+        _animator = GetComponent<Animator>();
         playerHealth = health;
     }
 
@@ -26,17 +26,18 @@ public class Controller : MonoBehaviour
         Walk();
         if (isWalking)
         {
-            animator.Play("Run");
+            _animator.Play("Run");
         }
 
-        else
+        else if(!isDead)
         {
-            animator.Play("Idle");
+            _animator.Play("Idle");
         }
 
         if(isDead)
         {
             StartCoroutine(C_OnDefeatPlayer());
+            _animator.Play("Dead1");
         }
         
     }
@@ -50,7 +51,7 @@ public class Controller : MonoBehaviour
 
         if (movement == Vector3.zero) 
         { 
-            rb.velocity = Vector3.zero;
+            _rb.velocity = Vector3.zero;
             isWalking = false;
         } 
 
@@ -66,13 +67,14 @@ public class Controller : MonoBehaviour
         if(playerHealth < 0)
         {
             Debug.Log("Ты сдох");
+
             isDead = true;
         }
     }
 
     public IEnumerator C_OnDefeatPlayer()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(3f);
         Destroy(gameObject);
     }
 
