@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class CameraCursor : MonoBehaviour
 {
-   private Camera mainCamera;
+    private Camera mainCamera;
+    public float rotationSpeed = 8f; 
 
     void Start()
     {
@@ -18,15 +19,13 @@ public class CameraCursor : MonoBehaviour
             Vector3 cursorPosition = mainCamera.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, mainCamera.transform.position.y - transform.position.y));
 
             Vector3 direction = cursorPosition - transform.position;
-
             direction.y = 0;
 
             if (direction != Vector3.zero)
             {
-                transform.rotation = Quaternion.LookRotation(direction, Vector3.up);
+                Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
+                transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
             }
         }
     }
-
-} 
-
+}

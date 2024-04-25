@@ -143,7 +143,7 @@ MonoBehaviour:
   distance: 100
   isShooting: 0
   isReloading: 0
-  bullet: {fileID: 4317752499368095659, guid: 25101839095e0564ea9dec6087e602fd, type: 3}
+  bullet: {fileID: 2480094643124711189, guid: 25101839095e0564ea9dec6087e602fd, type: 3}
   shotPoint: {fileID: 7588159111847940131}
   shootSpeed: 0.01
   timeSinceLastShot: 0
