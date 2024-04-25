@@ -5,7 +5,7 @@ using UnityEngine.AI;
 
 public class BaseEnemy : MonoBehaviour
 {
-    #region base enemy parameters
+    #region Enemy parameters
     [SerializeField] protected float health;
     [SerializeField] protected List<float> cooldowns;
     [SerializeField] protected float detectionDistance;
@@ -25,6 +25,20 @@ public class BaseEnemy : MonoBehaviour
     [SerializeField] protected bool hasBeenTargeted;
     [SerializeField] protected float walkPointRange;
     [SerializeField] protected float damage;
+
+    #region Events
+    //event for attacking beetle
+    public delegate void AttackEventHandler();
+    public event AttackEventHandler Attack;
+
+    //event for running beetle
+    public delegate void RunEventHandler();
+    public event RunEventHandler Run;
+
+    //event for death beetle
+    public delegate void DeathEventHandler();
+    public event DeathEventHandler Death;
+    #endregion Events
 
     protected virtual void Awake()
     {
@@ -46,23 +60,23 @@ public class BaseEnemy : MonoBehaviour
         playerInSightRange = Physics.CheckSphere(transform.position, detectionDistance, Player);
         playerInAttackRange = Physics.CheckSphere(transform.position, attackDistances[0], Player);
 
-        if(!playerInSightRange && !playerInAttackRange)
+        if(!playerInSightRange && !playerInAttackRange && !_isDead)
         {
             Patroling();
         }
 
-        else if(playerInSightRange && !playerInAttackRange)
+        else if(playerInSightRange && !playerInAttackRange && !_isDead)
         {
             ChasePlayer();
             hasBeenTargeted = true;
         }
 
-        else if(playerInSightRange && playerInAttackRange)
+        else if(playerInSightRange && playerInAttackRange && !_isDead)
         {
             AttackPlayer();
         }
 
-        if(hasBeenTargeted && !playerInSightRange && !playerInAttackRange)
+        if(hasBeenTargeted && !playerInSightRange && !playerInAttackRange && !_isDead)
         {
             ChasePlayer();
             StartCoroutine(C_ResetFollowingPlayer());
@@ -80,6 +94,7 @@ public class BaseEnemy : MonoBehaviour
 
         if(health <= 0)
         {
+            Death?.Invoke();
             _isDead = true;
             StartCoroutine(C_OnDefeat());
         }
@@ -106,6 +121,7 @@ public class BaseEnemy : MonoBehaviour
 
     protected virtual void Patroling()
     {
+        Run?.Invoke();
         if(!isWalkPointSet)
         {
             SearchWalkPoint();
@@ -126,6 +142,7 @@ public class BaseEnemy : MonoBehaviour
 
     protected virtual void ChasePlayer()
     {
+        Run?.Invoke();
         _agent.SetDestination(_target.position);
     }
 
@@ -136,6 +153,7 @@ public class BaseEnemy : MonoBehaviour
         
         if(!isAlreadyAttacked)
         {
+            Attack?.Invoke();
             Controller.TakeDamage(damage);
             Debug.Log(Controller.playerHealth);
             isAlreadyAttacked = true;
