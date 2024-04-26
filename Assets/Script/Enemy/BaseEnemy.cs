@@ -15,6 +15,7 @@ public class BaseEnemy : MonoBehaviour
     public Transform _target;
     [SerializeField]  protected bool _isDead = false;
     protected Animator _animator;
+    protected Rigidbody _rb;
     protected AudioSource _audioSource;
     protected NavMeshAgent _agent;
     public LayerMask Ground, Player;
@@ -45,6 +46,7 @@ public class BaseEnemy : MonoBehaviour
         _animator = GetComponent<Animator>();
         _audioSource = GetComponent<AudioSource>();
         _agent = GetComponent<NavMeshAgent>();
+        _rb = GetComponent<Rigidbody>();
     }
     
     protected virtual void Start()

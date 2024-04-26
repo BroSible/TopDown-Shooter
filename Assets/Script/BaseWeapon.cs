@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
+using UnityEngine.VFX;
 
 public class BaseWeapon : MonoBehaviour
 {
@@ -12,16 +13,16 @@ public class BaseWeapon : MonoBehaviour
     public bool isShooting;
     public bool isReloading;
     private KeyCode reloadKey = KeyCode.R;
-    private RaycastHit hit;
     public GameObject bullet;
     public Transform shotPoint;
     public float shootSpeed;
     public float timeSinceLastShot = 0f;
     public float timeBetweenShot = 0.3f;
-
     public AudioSource audiogun;
     public AudioClip ShootGun;
     public AudioClip reloadingGun;
+    public VisualEffect muzzleFlash;
+    
     
 
     void Start()
@@ -38,12 +39,17 @@ public class BaseWeapon : MonoBehaviour
             if(timeSinceLastShot > timeBetweenShot)
             {
                 audiogun.PlayOneShot(ShootGun);
+
+                muzzleFlash.Play();
+
                 Vector3 direction = shotPoint.transform.forward.normalized;  
                 GameObject _bullet = Instantiate(bullet, shotPoint.position,Quaternion.LookRotation(shotPoint.forward) * Quaternion.Euler(90, 0, 0));
                 _bullet.SetActive(true);
+
                 Rigidbody bulletRb = _bullet.GetComponent<Rigidbody>();
                 bulletRb.velocity = direction * 70f; // тут можно изменить скорость полёта пули
                 GameObject.Destroy(_bullet, 5f);
+
                 StartCoroutine("C_shoot");
                 timeSinceLastShot = 0f;
             }
@@ -52,7 +58,7 @@ public class BaseWeapon : MonoBehaviour
 
         else if(Input.GetKey(reloadKey) && !isShooting && !isReloading && magazineSize != maxSizeMagazine)
         {
-            audiogun.PlayOneShot(ShootGun);
+            audiogun.PlayOneShot(reloadingGun);
             StartCoroutine("C_reload");
             Debug.Log("Перезарядка");
         }
