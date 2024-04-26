@@ -102,7 +102,10 @@ public class BaseEnemy : MonoBehaviour
 
     public virtual IEnumerator C_OnDefeat()
     {
-        yield return new WaitForSeconds(1f);
+        float animationLength = _animator.GetCurrentAnimatorStateInfo(0).length;
+        yield return new WaitForSeconds(animationLength + 10f);
+        //animationLength = _animator.GetCurrentAnimatorStateInfo(0).length;
+        //yield return new WaitForSeconds(animationLength);
         Destroy(gameObject);
     }
 
@@ -171,5 +174,4 @@ public class BaseEnemy : MonoBehaviour
         yield return new WaitForSeconds(6f);
         hasBeenTargeted = false;
     }
-
 }
