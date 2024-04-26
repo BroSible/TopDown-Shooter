@@ -1121,6 +1121,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 201751794}
   m_SourcePrefab: {fileID: 100100000, guid: 6216ca63b4b7910468cb88bddb900fc0, type: 3}
+--- !u!1 &105490000 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 922808784793191732, guid: 6c8f7371675f8e641995230c66e89b1f, type: 3}
+  m_PrefabInstance: {fileID: 7813767026380714256}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &189561119 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 528b7e3554ccc4849aeadff56a17eaf9, type: 3}
@@ -2237,7 +2242,7 @@ GameObject:
   - component: {fileID: 571369215}
   - component: {fileID: 571369214}
   m_Layer: 5
-  m_Name: Button (3)
+  m_Name: ExitToMain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2616,7 +2621,7 @@ MonoBehaviour:
   pauseMenu: {fileID: 1824806554}
   isPaused: 0
   cameraController: {fileID: 201751794}
-  baseWeapon: {fileID: 0}
+  baseWeapon: {fileID: 1465637385}
 --- !u!114 &809582945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3612,7 +3617,7 @@ GameObject:
   - component: {fileID: 1455519067}
   - component: {fileID: 1455519066}
   m_Layer: 5
-  m_Name: Button (2)
+  m_Name: Settings
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3725,6 +3730,113 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4121921238503078400, guid: 6c8f7371675f8e641995230c66e89b1f, type: 3}
   m_PrefabInstance: {fileID: 7813767026380714256}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1465637385 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8242108424549183084, guid: 6c8f7371675f8e641995230c66e89b1f, type: 3}
+  m_PrefabInstance: {fileID: 7813767026380714256}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 105490000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51a79cc66efae4447adee0bc8b2965e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!82 &1465637386
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 105490000}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 0.183
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1565751642
 GameObject:
   m_ObjectHideFlags: 0
@@ -3738,7 +3850,7 @@ GameObject:
   - component: {fileID: 1565751645}
   - component: {fileID: 1565751644}
   m_Layer: 5
-  m_Name: Button (1)
+  m_Name: LoadSaving
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4121,12 +4233,12 @@ GameObject:
   - component: {fileID: 1685855802}
   - component: {fileID: 1685855801}
   m_Layer: 5
-  m_Name: Button
+  m_Name: Resume
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1685855800
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4720,13 +4832,36 @@ PrefabInstance:
       value: -66.952
       objectReference: {fileID: 0}
     - target: {fileID: 8242108424549183084, guid: 6c8f7371675f8e641995230c66e89b1f, type: 3}
+      propertyPath: clip
+      value: 
+      objectReference: {fileID: 8300000, guid: e098d44764de7274fa0ed0a058a6c664, type: 3}
+    - target: {fileID: 8242108424549183084, guid: 6c8f7371675f8e641995230c66e89b1f, type: 3}
+      propertyPath: ShootGun
+      value: 
+      objectReference: {fileID: 8300000, guid: e098d44764de7274fa0ed0a058a6c664, type: 3}
+    - target: {fileID: 8242108424549183084, guid: 6c8f7371675f8e641995230c66e89b1f, type: 3}
+      propertyPath: audiogun
+      value: 
+      objectReference: {fileID: 1465637386}
+    - target: {fileID: 8242108424549183084, guid: 6c8f7371675f8e641995230c66e89b1f, type: 3}
       propertyPath: shotPoint
       value: 
       objectReference: {fileID: 273894920}
+    - target: {fileID: 8242108424549183084, guid: 6c8f7371675f8e641995230c66e89b1f, type: 3}
+      propertyPath: reloadingGun
+      value: 
+      objectReference: {fileID: 8300000, guid: 0638a891196d5a24983a365df8975a9d, type: 3}
+    - target: {fileID: 8242108424549183084, guid: 6c8f7371675f8e641995230c66e89b1f, type: 3}
+      propertyPath: timeBetweenShot
+      value: 0.1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 922808784793191732, guid: 6c8f7371675f8e641995230c66e89b1f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1465637386}
   m_SourcePrefab: {fileID: 100100000, guid: 6c8f7371675f8e641995230c66e89b1f, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
