@@ -8,11 +8,9 @@ using TMPro;
 
 public class Settings : MonoBehaviour
 {
-    public AudioMixer audioMixer;
     public TMP_Dropdown resolutionDropdown;
     public TMP_Dropdown qualityDropdown;
-    public Slider volumeSlider;
-    float currentVolume;
+
     Resolution[] resolutions;
 
     void Start()
@@ -36,11 +34,7 @@ public class Settings : MonoBehaviour
         LoadSettings(currentResolutionIndex);
     }
 
-    public void SetVolume(float volume)
-    {
-        audioMixer.SetFloat("Volume", volume);
-        currentVolume = volume;
-    }
+
     public void SetFullscreen(bool isFullscreen)
     {
         Screen.fullScreen = isFullscreen;
@@ -74,8 +68,6 @@ public class Settings : MonoBehaviour
                    resolutionDropdown.value);
         PlayerPrefs.SetInt("FullscreenPreference",
                    System.Convert.ToInt32(Screen.fullScreen));
-        PlayerPrefs.SetFloat("VolumePreference",
-                   currentVolume);
     }
 
     public void LoadSettings(int currentResolutionIndex)
@@ -95,11 +87,5 @@ public class Settings : MonoBehaviour
             System.Convert.ToBoolean(PlayerPrefs.GetInt("FullscreenPreference"));
         else
             Screen.fullScreen = true;
-        if (PlayerPrefs.HasKey("VolumePreference"))
-            volumeSlider.value =
-                        PlayerPrefs.GetFloat("VolumePreference");
-        else
-            volumeSlider.value =
-                        PlayerPrefs.GetFloat("VolumePreference");
     }
 }
