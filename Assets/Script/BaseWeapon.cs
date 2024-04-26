@@ -19,10 +19,14 @@ public class BaseWeapon : MonoBehaviour
     public float timeSinceLastShot = 0f;
     public float timeBetweenShot = 0.3f;
 
+    public AudioSource audiogun;
+    public AudioClip ShootGun;
+    public AudioClip reloadingGun;
+    
 
     void Start()
     {
-        
+        audiogun = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -33,6 +37,7 @@ public class BaseWeapon : MonoBehaviour
         {
             if(timeSinceLastShot > timeBetweenShot)
             {
+                audiogun.PlayOneShot(ShootGun);
                 Vector3 direction = shotPoint.transform.forward.normalized;  
                 GameObject _bullet = Instantiate(bullet, shotPoint.position,Quaternion.LookRotation(shotPoint.forward) * Quaternion.Euler(90, 0, 0));
                 _bullet.SetActive(true);
@@ -47,16 +52,18 @@ public class BaseWeapon : MonoBehaviour
 
         else if(Input.GetKey(reloadKey) && !isShooting && !isReloading && magazineSize != maxSizeMagazine)
         {
+            audiogun.PlayOneShot(ShootGun);
             StartCoroutine("C_reload");
             Debug.Log("Перезарядка");
         }
 
         else if(isShooting && magazineSize == 0)
         {
+            audiogun.PlayOneShot(reloadingGun);
             StartCoroutine("C_reload");
             Debug.Log("Перезарядка");
         }
-
+        
 
     }
 
@@ -71,12 +78,14 @@ public class BaseWeapon : MonoBehaviour
     }
 
     private IEnumerator C_reload()
-    {
+    {   
+        
         isReloading = true;
         yield return new WaitForSeconds(3f);
         magazineSize = maxSizeMagazine;
         isReloading = false;
     }
+
 
 
 }
