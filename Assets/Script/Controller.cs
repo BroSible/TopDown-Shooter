@@ -69,7 +69,7 @@ public class Controller : MonoBehaviour
     public static void TakeDamage(float damage)
     {
         playerHealth -= damage;
-        if(playerHealth < 0)
+        if(playerHealth <= 0)
         {
             Debug.Log("Ты сдох");
 

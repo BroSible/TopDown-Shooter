@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class PauseMenu : MonoBehaviour
 {
     public GameObject pauseMenu;
+    public GameObject playerUI;
     public bool isPaused;
     public CameraCursor cameraController = new CameraCursor();
     public BaseWeapon baseWeapon = new BaseWeapon();
@@ -34,6 +35,7 @@ public class PauseMenu : MonoBehaviour
     public void PauseGame()
     {
         pauseMenu.SetActive(true);
+        playerUI.SetActive(false);
         Time.timeScale = 0f;
         isPaused = true;
 
@@ -45,6 +47,7 @@ public class PauseMenu : MonoBehaviour
     public void ResumeGame()
     {
         pauseMenu.SetActive(false);
+        playerUI.SetActive(true);
         Time.timeScale = 1f;
         isPaused = false;
         

@@ -8,7 +8,7 @@ public class BaseWeapon : MonoBehaviour
 {
     public float weaponDamage;
     public int magazineSize;
-    public int maxSizeMagazine = 100;
+    public int maxSizeMagazine = 30;
     public float distance;
     public bool isShooting;
     public bool isReloading;
