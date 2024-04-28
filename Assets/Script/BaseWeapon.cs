@@ -56,19 +56,20 @@ public class BaseWeapon : MonoBehaviour
 
         }
 
-        else if(Input.GetKey(reloadKey) && !isShooting && !isReloading && magazineSize != maxSizeMagazine)
+        else if(Input.GetKey(reloadKey) && !isShooting && !isReloading && magazineSize != maxSizeMagazine ) 
         {
-            audiogun.PlayOneShot(reloadingGun);
+
             StartCoroutine("C_reload");
             Debug.Log("Перезарядка");
         }
 
-        else if(isShooting && magazineSize == 0)
+        else if(magazineSize == 0  && !isReloading)
         {
-            audiogun.PlayOneShot(reloadingGun);
             StartCoroutine("C_reload");
-            Debug.Log("Перезарядка");
+            Debug.Log("У тебя 0 патрон, поэтому Relaod");
         }
+
+
         
 
     }
@@ -85,8 +86,8 @@ public class BaseWeapon : MonoBehaviour
 
     private IEnumerator C_reload()
     {   
-        
         isReloading = true;
+        audiogun.PlayOneShot(reloadingGun);
         yield return new WaitForSeconds(3f);
         magazineSize = maxSizeMagazine;
         isReloading = false;

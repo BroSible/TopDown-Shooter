@@ -13,23 +13,25 @@ public class Controller : MonoBehaviour
     public static float playerHealth;
     public float speed;
     public static bool isDead = false;
+    CameraCursor _cameraCursor;
 
     void Start()
     {
         _rb = GetComponent<Rigidbody>();
         _animator = GetComponent<Animator>();
+        _cameraCursor = GetComponent<CameraCursor>();
         playerHealth = health;
     }
 
     void FixedUpdate()
     {
-        Walk();
-        if (isWalking)
+        
+        if (!isDead)
         {
-            _animator.Play("Run");
+            Walk();
         }
 
-        else if(!isDead)
+        else if(!isDead && !isWalking)
         {
             _animator.Play("Idle");
         }
@@ -44,6 +46,7 @@ public class Controller : MonoBehaviour
 
     public void Walk()
     {
+        
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
         movement = new Vector3(moveHorizontal,0,moveVertical);
@@ -53,10 +56,12 @@ public class Controller : MonoBehaviour
         { 
             _rb.velocity = Vector3.zero;
             isWalking = false;
+            _animator.Play("Idle");
         } 
 
         else
         {
+            _animator.Play("Run");
             isWalking = true;
         }
     }
@@ -74,7 +79,9 @@ public class Controller : MonoBehaviour
 
     public IEnumerator C_OnDefeatPlayer()
     {
-        yield return new WaitForSeconds(3f);
+        float animationLength = _animator.GetCurrentAnimatorStateInfo(0).length;
+        _cameraCursor.enabled = false;
+        yield return new WaitForSeconds(animationLength);
         Destroy(gameObject);
     }
 
