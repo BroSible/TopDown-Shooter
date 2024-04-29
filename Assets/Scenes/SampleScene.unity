@@ -9055,7 +9055,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 201751788}
   newPosition: {x: 0, y: 0, z: 0}
-  targetOffset: {x: 4, y: 10, z: 0}
+  targetOffset: {x: 0, y: 10, z: -4}
   movementSpeed: 10
 --- !u!114 &963194230
 MonoBehaviour:
