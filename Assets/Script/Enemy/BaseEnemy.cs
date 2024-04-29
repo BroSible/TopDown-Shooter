@@ -18,7 +18,7 @@ public class BaseEnemy : MonoBehaviour
     protected Rigidbody _rb;
     protected AudioSource _audioSource;
     protected NavMeshAgent _agent;
-    public LayerMask Ground, Player;
+    public LayerMask Ground, Player, Rock;
     protected Vector3 walkPoint;
     [SerializeField] protected bool isWalkPointSet;
     [SerializeField] protected bool isAlreadyAttacked;
@@ -113,16 +113,17 @@ public class BaseEnemy : MonoBehaviour
 
     protected virtual void SearchWalkPoint()
     {
-        float walkRandomZ = Random.Range(-walkPointRange, walkPointRange);
-        float walkRandomX = Random.Range(-walkPointRange, walkPointRange);
-
-        walkPoint = new Vector3 (transform.position.x + walkRandomX,transform.position.y, transform.position.z + walkRandomZ);
-
-        if(Physics.Raycast(walkPoint,-transform.up,10f, Ground))
+        NavMeshHit hit;
+        NavMeshQueryFilter filter = new NavMeshQueryFilter();
+        filter.areaMask = NavMesh.AllAreas & ~Rock.value; // Игнорируем Rock слой
+        Vector3 randomPoint = transform.position + Random.insideUnitSphere * walkPointRange;
+        if (NavMesh.SamplePosition(randomPoint, out hit, walkPointRange, filter))
         {
+            walkPoint = hit.position;
             isWalkPointSet = true;
         }
     }
+
 
     protected virtual void Patroling()
     {

@@ -50,7 +50,7 @@ public class Controller : MonoBehaviour
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
         movement = new Vector3(moveHorizontal,0,moveVertical);
-        transform.Translate(movement * speed * Time.deltaTime, Space.World);
+        transform.Translate(movement * speed * Time.deltaTime,Space.World);
 
         if (movement == Vector3.zero) 
         { 
