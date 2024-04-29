@@ -14,6 +14,8 @@ public class Controller : MonoBehaviour
     public float speed;
     public static bool isDead = false;
     CameraCursor _cameraCursor;
+    AudioSource _audioSource;
+    public AudioClip _footStep;
 
     void Start()
     {
@@ -21,6 +23,7 @@ public class Controller : MonoBehaviour
         _animator = GetComponent<Animator>();
         _cameraCursor = GetComponent<CameraCursor>();
         playerHealth = health;
+        _audioSource = GetComponent<AudioSource>();
     }
 
     void FixedUpdate()
@@ -34,6 +37,7 @@ public class Controller : MonoBehaviour
         else if(!isDead && !isWalking)
         {
             _animator.Play("Idle");
+
         }
 
         if(isDead)
@@ -46,7 +50,8 @@ public class Controller : MonoBehaviour
 
     public void Walk()
     {
-        
+        //_audioSource.PlayOneShot(_footStep);
+
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
         movement = new Vector3(moveHorizontal,0,moveVertical);
@@ -57,10 +62,12 @@ public class Controller : MonoBehaviour
             _rb.velocity = Vector3.zero;
             isWalking = false;
             _animator.Play("Idle");
+            _audioSource.clip = null;
         } 
 
         else
         {
+
             _animator.Play("Run");
             isWalking = true;
         }
