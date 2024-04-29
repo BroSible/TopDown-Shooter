@@ -652,6 +652,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loaderUI: {fileID: 1938691563}
   progressSlider: {fileID: 580834939}
+  transition: {fileID: 963754102}
 --- !u!95 &963754102
 Animator:
   serializedVersion: 5
@@ -730,7 +731,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: 5d320764584ad0a41b0e9196da0dadd7, type: 3}
+  m_Texture: {fileID: 2800000, guid: aedf64784c278d546a53dd1df79f7426, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0

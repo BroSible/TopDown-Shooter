@@ -5,9 +5,11 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class SceneLoader : MonoBehaviour
+
 {
     public GameObject loaderUI;
     public Slider progressSlider;
+    public Animator transition;
 
     public void Start()
     {
@@ -18,6 +20,7 @@ public class SceneLoader : MonoBehaviour
     {
         progressSlider.value = 0;
         loaderUI.SetActive(true);
+        transition.SetTrigger("Start");
 
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync("SampleScene"); //Тут поменять сцену на нужную
         asyncOperation.allowSceneActivation = false;
