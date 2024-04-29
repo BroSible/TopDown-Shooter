@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Controller : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class Controller : MonoBehaviour
     public float speed;
     public static bool isDead = false;
     CameraCursor _cameraCursor;
+    AudioSource _audioSource;
+    public AudioClip _footStep;
 
     void Start()
     {
@@ -21,6 +24,7 @@ public class Controller : MonoBehaviour
         _animator = GetComponent<Animator>();
         _cameraCursor = GetComponent<CameraCursor>();
         playerHealth = health;
+        _audioSource = GetComponent<AudioSource>();
     }
 
     void FixedUpdate()
@@ -34,29 +38,32 @@ public class Controller : MonoBehaviour
         else if(!isDead && !isWalking)
         {
             _animator.Play("Idle");
+
         }
 
         if(isDead)
         {
+
             StartCoroutine(C_OnDefeatPlayer());
-            _animator.Play("Dead1");
         }
         
     }
 
     public void Walk()
     {
-        
+        //_audioSource.PlayOneShot(_footStep);
+
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
         movement = new Vector3(moveHorizontal,0,moveVertical);
         transform.Translate(movement * speed * Time.deltaTime,Space.World);
 
-        if (movement == Vector3.zero) 
+        if (movement == Vector3.zero && !isDead) 
         { 
             _rb.velocity = Vector3.zero;
             isWalking = false;
             _animator.Play("Idle");
+            _audioSource.clip = null;
         } 
 
         else
@@ -71,7 +78,6 @@ public class Controller : MonoBehaviour
         playerHealth -= damage;
         if(playerHealth <= 0)
         {
-            Debug.Log("Ты сдох");
 
             isDead = true;
         }
@@ -81,8 +87,12 @@ public class Controller : MonoBehaviour
     {
         float animationLength = _animator.GetCurrentAnimatorStateInfo(0).length;
         _cameraCursor.enabled = false;
-        yield return new WaitForSeconds(animationLength);
-        Destroy(gameObject);
+        yield return new WaitForSeconds(animationLength + 0.7f);
+        _animator.Play("Dead1");
+        
+        yield return new WaitForSeconds(2f);
+        isDead = false;
+        SceneManager.LoadScene("SampleScene"); 
     }
 
 
