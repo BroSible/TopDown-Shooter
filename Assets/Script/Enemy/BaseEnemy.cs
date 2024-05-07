@@ -12,10 +12,11 @@ public class BaseEnemy : MonoBehaviour
     [SerializeField] protected List<float> attackDistances;
     #endregion
     [SerializeField] protected List<AudioClip> audioClips;
-    public Transform _target;
+    private Transform _target;
     [SerializeField]  protected bool _isDead = false;
     protected Animator _animator;
     protected Rigidbody _rb;
+    Collider _collider;
     protected AudioSource _audioSource;
     protected NavMeshAgent _agent;
     public LayerMask Ground, Player, Rock;
@@ -47,6 +48,7 @@ public class BaseEnemy : MonoBehaviour
         _audioSource = GetComponent<AudioSource>();
         _agent = GetComponent<NavMeshAgent>();
         _rb = GetComponent<Rigidbody>();
+        _collider = GetComponent<Collider>();
     }
     
     protected virtual void Start()
@@ -98,6 +100,8 @@ public class BaseEnemy : MonoBehaviour
         {
             Death?.Invoke();
             _isDead = true;
+            gameObject.tag = "Untagged";
+            Destroy(_collider);
             StartCoroutine(C_OnDefeat());
         }
     }
