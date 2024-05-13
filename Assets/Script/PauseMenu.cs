@@ -9,12 +9,9 @@ public class PauseMenu : MonoBehaviour
     public GameObject playerUI;
     public bool isPaused;
     public CameraCursor cameraController = new CameraCursor();
-    public BaseWeapon baseWeapon = new BaseWeapon();
+    public BaseWeapon[] _weapons;
+    public WeaponManager _weaponManager = new WeaponManager();
 
-    void Start()
-    {
-        //pauseMenu.SetActive(false);
-    }
 
     void Update()
     {
@@ -41,7 +38,8 @@ public class PauseMenu : MonoBehaviour
 
         
         cameraController.enabled = false;
-        baseWeapon.enabled = false;
+        _weaponManager.enabled = false;
+        _weapons[_weaponManager.currentWeaponIndex].enabled = false;
     }
 
     public void ResumeGame()
@@ -52,7 +50,8 @@ public class PauseMenu : MonoBehaviour
         isPaused = false;
         
         StartCoroutine(EnableCameraWithDelay());
-        baseWeapon.enabled = true;
+        _weaponManager.enabled = true;
+        _weapons[_weaponManager.currentWeaponIndex].enabled = true;
     }
 
     public void GoToMainMenu()

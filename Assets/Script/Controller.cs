@@ -51,8 +51,6 @@ public class Controller : MonoBehaviour
 
     public void Walk()
     {
-        //_audioSource.PlayOneShot(_footStep);
-
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
         movement = new Vector3(moveHorizontal,0,moveVertical);
@@ -85,9 +83,7 @@ public class Controller : MonoBehaviour
 
     public IEnumerator C_OnDefeatPlayer()
     {
-        float animationLength = _animator.GetCurrentAnimatorStateInfo(0).length;
         _cameraCursor.enabled = false;
-        yield return new WaitForSeconds(animationLength + 0.7f);
         _animator.Play("Dead1");
         
         yield return new WaitForSeconds(2f);

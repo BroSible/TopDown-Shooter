@@ -110,8 +110,6 @@ public class BaseEnemy : MonoBehaviour
     {
         float animationLength = _animator.GetCurrentAnimatorStateInfo(0).length;
         yield return new WaitForSeconds(animationLength + 10f);
-        //animationLength = _animator.GetCurrentAnimatorStateInfo(0).length; тут написано получение длины анимации дял исчезновения врага.
-        //yield return new WaitForSeconds(animationLength);
         Destroy(gameObject);
     }
 

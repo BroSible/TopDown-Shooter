@@ -8,11 +8,12 @@ public class PlayerUI : MonoBehaviour
 {
     public TMP_Text ammoText;
     public TMP_Text healthText;
-    [SerializeField] private BaseWeapon weapon;
+    [SerializeField] private BaseWeapon[] _weapons;
+    [SerializeField] private WeaponManager _weaponManager;
 
     void Update()
     {
-        ammoText.text = weapon.magazineSize.ToString();
+        ammoText.text = _weapons[_weaponManager.currentWeaponIndex].magazineSize.ToString();
         healthText.text = Controller.playerHealth.ToString();
 
         if(Controller.playerHealth  <= 0)

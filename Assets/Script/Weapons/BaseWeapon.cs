@@ -15,27 +15,37 @@ public class BaseWeapon : MonoBehaviour
     private KeyCode reloadKey = KeyCode.R;
     public GameObject bullet;
     public Transform shotPoint;
-    public float shootSpeed;
+    public float bulletSpeed;
     public float timeSinceLastShot = 0f;
     public float timeBetweenShot = 0.3f;
     public AudioSource audiogun;
     public AudioClip ShootGun;
     public AudioClip reloadingGun;
     public VisualEffect muzzleFlash;
-    
-    
 
-    void Start()
+    //публичное свойство для передачи переменной в класс WeaponManager
+    public bool IsReloading
+    {
+        get {return isReloading;}
+    }
+    
+    public bool IsShooting
+    {
+        get {return isShooting;}
+    }
+    
+    protected virtual void Start()
     {
         audiogun = GetComponent<AudioSource>();
     }
 
-    void Update()
+    protected virtual void Update()
     {
         timeSinceLastShot += Time.deltaTime;
         Debug.DrawRay(shotPoint.transform.position, shotPoint.transform.forward * distance, Color.red);
         if(Input.GetButton("Fire1") && !isShooting && !isReloading)
         {
+            isShooting = true;
             if(timeSinceLastShot > timeBetweenShot)
             {
                 audiogun.PlayOneShot(ShootGun);
@@ -47,13 +57,12 @@ public class BaseWeapon : MonoBehaviour
                 _bullet.SetActive(true);
 
                 Rigidbody bulletRb = _bullet.GetComponent<Rigidbody>();
-                bulletRb.velocity = direction * 70f; // тут можно изменить скорость полёта пули
+                bulletRb.velocity = direction * bulletSpeed; // тут можно изменить скорость полёта пули
                 GameObject.Destroy(_bullet, 5f);
 
-                StartCoroutine("C_shoot");
                 timeSinceLastShot = 0f;
+                magazineSize--;
             }
-
         }
 
         else if(Input.GetKey(reloadKey) && !isShooting && !isReloading && magazineSize != maxSizeMagazine ) 
@@ -69,22 +78,15 @@ public class BaseWeapon : MonoBehaviour
             Debug.Log("У тебя 0 патрон, поэтому Relaod");
         }
 
+        else
+        {
+            isShooting = false;
+        }
 
         
-
     }
 
-
-    private IEnumerator C_shoot()
-    {
-        isShooting = true;
-
-        magazineSize--;
-        yield return new WaitForSeconds(shootSpeed);
-        isShooting = false;
-    }
-
-    private IEnumerator C_reload()
+    protected virtual IEnumerator C_reload()
     {   
         isReloading = true;
         audiogun.PlayOneShot(reloadingGun);

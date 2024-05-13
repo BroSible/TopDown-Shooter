@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BulletLogick : MonoBehaviour
 {
-    public BaseWeapon baseWeapon;
+    public BaseWeapon weapon;
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Enemy"))
@@ -12,7 +12,7 @@ public class BulletLogick : MonoBehaviour
             BaseEnemy enemy = other.GetComponent<BaseEnemy>();
             if (enemy != null)
             {
-                enemy.TakeDamage(baseWeapon.weaponDamage);
+                enemy.TakeDamage(weapon.weaponDamage);
             }
             Destroy(gameObject);
         }
