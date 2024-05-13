@@ -6440,7 +6440,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &344504245
 Transform:
   m_ObjectHideFlags: 0
@@ -11373,10 +11373,8 @@ MonoBehaviour:
   playerUI: {fileID: 1826069993}
   isPaused: 0
   cameraController: {fileID: 1369817360}
-  weapons:
-  - {fileID: 1160816551}
-  - {fileID: 1928265736}
-  weaponManager: {fileID: 1369817364}
+  _weapons: []
+  _weaponManager: {fileID: 0}
 --- !u!114 &623673411
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24765,6 +24763,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1308499488}
   - component: {fileID: 1308499487}
+  - component: {fileID: 1308499489}
   m_Layer: 0
   m_Name: Audio Source
   m_TagString: Untagged
@@ -24883,6 +24882,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1308499489
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1308499486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99b5f067a184cc546a4f8975fffb70cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  musicClips:
+  - {fileID: 8300000, guid: 3feb341c77c94d74ca2f6da199d5c3a7, type: 3}
+  - {fileID: 8300000, guid: f4ba3cac3c1c8fb4793abc143d2eefa5, type: 3}
+  - {fileID: 8300000, guid: 07b2b0b3161dbc04d86f376b4855601e, type: 3}
+  - {fileID: 8300000, guid: dea2f1980e9fa774cae37e606c11fd09, type: 3}
+  - {fileID: 8300000, guid: a58b996f2a406bd42976fc62930dfdf1, type: 3}
+  - {fileID: 8300000, guid: 52dcfa1020d3919499ed870f3452c04e, type: 3}
+  - {fileID: 8300000, guid: ae4c66116a6db544db5aa1601a62cb81, type: 3}
 --- !u!1 &1313248294
 GameObject:
   m_ObjectHideFlags: 0
@@ -27169,9 +27188,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1d34183e14fdd8429df80e911187b3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weapons:
+  _weapons:
   - {fileID: 1160816548}
-  - {fileID: 1928265733}
+  - {fileID: 4888987374854805404, guid: fdedba7cebd66b746a1b1d72d7917331, type: 3}
   currentWeaponIndex: 0
 --- !u!1 &1374525031 stripped
 GameObject:
@@ -35915,10 +35934,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ammoText: {fileID: 731822711}
   healthText: {fileID: 649417921}
-  weapons:
+  _weapons:
   - {fileID: 1160816551}
   - {fileID: 1928265736}
-  weaponManager: {fileID: 1369817364}
+  _weaponManager: {fileID: 1369817364}
 --- !u!114 &1826069995
 MonoBehaviour:
   m_ObjectHideFlags: 0
