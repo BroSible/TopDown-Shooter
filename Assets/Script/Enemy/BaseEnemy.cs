@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UIElements;
 
 public class BaseEnemy : MonoBehaviour
 {
@@ -30,6 +31,12 @@ public class BaseEnemy : MonoBehaviour
     [SerializeField] protected bool hasBeenTargeted;
     [SerializeField] protected float walkPointRange;
     [SerializeField] protected float damage;
+
+    // Массив предметов для спавна
+    public GameObject[] bonus;
+
+    // Шанс спавна предмета (в процентах)
+    public float spawnBonusChance = 10f;
 
     #region Events
     //event for attacking beetle
@@ -112,6 +119,7 @@ public class BaseEnemy : MonoBehaviour
             _isDead = true;
             gameObject.tag = "Untagged";
             Destroy(_collider);
+            SpawnRandomBonus();
             StartCoroutine(C_OnDefeat());
         }
         else
@@ -194,6 +202,17 @@ public class BaseEnemy : MonoBehaviour
         hasBeenTargeted = false;
     }
 
+    protected virtual void SpawnRandomBonus()
+    {
+        float randomNumber = Random.Range(0f,100f);
+
+        if(randomNumber <= spawnBonusChance)
+        {
+            int randomIndex = Random.Range(0, bonus.Length);
+            Instantiate(bonus[randomIndex], transform.position + Vector3.up * 3f, Quaternion.identity);
+        }
+    }
+
     
     protected virtual void PlayWalkSound()
     {
@@ -255,6 +274,5 @@ public class BaseEnemy : MonoBehaviour
         Death -= PlayDeathSound;
         Hit -= PlayHitSound; 
     }
-
     
 }

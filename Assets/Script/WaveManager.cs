@@ -29,7 +29,7 @@ public class WaveManager : MonoBehaviour
     {
         timeToStartCoroutine += Time.deltaTime;
 
-        if (!EnemyIsAlive() && isSpawning)
+        if (!EnemyIsAlive() && isSpawning && beetleSpawned == maxBeetle)
         {
             currentState = WaveState.Ended;
         }
