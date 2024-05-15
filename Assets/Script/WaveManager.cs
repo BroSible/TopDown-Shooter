@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;  // Необходимо добавить пространство имён TMPro
 
 public class WaveManager : MonoBehaviour
 {
@@ -21,11 +22,12 @@ public class WaveManager : MonoBehaviour
     }
 
     public WaveState currentState;
-    
+
+    public TMP_Text waveText;  
+
     void Update()
     {
         timeToStartCoroutine += Time.deltaTime;
-        Debug.Log($"State: {currentState}");
 
         if (!EnemyIsAlive() && isSpawning)
         {
@@ -58,6 +60,8 @@ public class WaveManager : MonoBehaviour
                 break;
             }
         }
+
+        waveText.text = $"Волна: {currentWave}";  
     }
 
     public void SpawnEnemy()
@@ -77,7 +81,6 @@ public class WaveManager : MonoBehaviour
 
     public void SetWaveActive()
     {
-        Debug.Log("Рестарт");
         isSpawning = false;
         beetleSpawned = 0;
         maxBeetle += maxAddtoWave;
