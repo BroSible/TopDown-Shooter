@@ -471,7 +471,7 @@ MonoBehaviour:
   walkSound: {fileID: 8300000, guid: 495a53db1d2520f49a928f1af0c3b9cc, type: 3}
   attackSound: {fileID: 8300000, guid: 35a1e0d8acf68f04a92cd99cef7c5fa1, type: 3}
   deathSound: {fileID: 8300000, guid: cdc5314e8277f0047a9deacdd692eb97, type: 3}
-  hitSound: {fileID: 8300000, guid: 2047fcc4e05aa374587ed4274fd9b98e, type: 3}
+  hitSound: {fileID: 8300000, guid: a622a97e3b0701745a4520f3c902cd05, type: 3}
   _isDead: 0
   Ground:
     serializedVersion: 2
@@ -501,7 +501,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 0.305
+  m_Volume: 1
   m_Pitch: 1
   Loop: 0
   Mute: 0

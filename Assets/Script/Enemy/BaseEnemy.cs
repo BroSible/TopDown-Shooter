@@ -255,4 +255,6 @@ public class BaseEnemy : MonoBehaviour
         Death -= PlayDeathSound;
         Hit -= PlayHitSound; 
     }
+
+    
 }
