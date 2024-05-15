@@ -11,7 +11,10 @@ public class BaseEnemy : MonoBehaviour
     [SerializeField] protected float detectionDistance;
     [SerializeField] protected List<float> attackDistances;
     #endregion
-    [SerializeField] protected List<AudioClip> audioClips;
+    [SerializeField] protected AudioClip walkSound; // Используем отдельные переменные для звуков
+    [SerializeField] protected AudioClip attackSound;
+    [SerializeField] protected AudioClip deathSound;
+    [SerializeField] protected AudioClip hitSound; // Звук попадания урона
     private Transform _target;
     [SerializeField]  protected bool _isDead = false;
     protected Animator _animator;
@@ -40,6 +43,10 @@ public class BaseEnemy : MonoBehaviour
     //event for death beetle
     public delegate void DeathEventHandler();
     public event DeathEventHandler Death;
+
+    //event for getting hit
+    public delegate void HitEventHandler();
+    public event HitEventHandler Hit;
     #endregion Events
 
     protected virtual void Awake()
@@ -49,6 +56,9 @@ public class BaseEnemy : MonoBehaviour
         _agent = GetComponent<NavMeshAgent>();
         _rb = GetComponent<Rigidbody>();
         _collider = GetComponent<Collider>();
+
+        // Настройка AudioSource для циклического воспроизведения звука ходьбы
+        _audioSource.loop = true; // Включаем циклическое воспроизведение
     }
     
     protected virtual void Start()
@@ -103,6 +113,10 @@ public class BaseEnemy : MonoBehaviour
             gameObject.tag = "Untagged";
             Destroy(_collider);
             StartCoroutine(C_OnDefeat());
+        }
+        else
+        {
+            Hit?.Invoke(); // Вызываем событие "Hit"
         }
     }
 
@@ -162,7 +176,7 @@ public class BaseEnemy : MonoBehaviour
         if(!isAlreadyAttacked)
         {
             Attack?.Invoke();
-            Controller.TakeDamage(damage);
+            Controller.TakeDamage(damage); 
             Debug.Log(Controller.playerHealth);
             isAlreadyAttacked = true;
             Invoke(nameof(ResetAttack),cooldowns[0]); 
@@ -178,5 +192,67 @@ public class BaseEnemy : MonoBehaviour
     {
         yield return new WaitForSeconds(6f);
         hasBeenTargeted = false;
+    }
+
+    
+    protected virtual void PlayWalkSound()
+    {
+        if (walkSound != null)
+        {
+            _audioSource.clip = walkSound;
+            if (!_audioSource.isPlaying) 
+            {
+                _audioSource.Play(); 
+            }
+        }
+    }
+
+    
+    protected virtual void PlayAttackSound()
+    {
+        if (attackSound != null)
+        {
+            _audioSource.clip = attackSound;
+            _audioSource.loop = false; 
+            _audioSource.Play(); 
+        }
+    }
+
+    
+    protected virtual void PlayDeathSound()
+    {
+        if (deathSound != null)
+        {
+            _audioSource.clip = deathSound;
+            _audioSource.loop = false; 
+            _audioSource.Play(); 
+        }
+    }
+
+    
+    protected virtual void PlayHitSound()
+    {
+        if (hitSound != null)
+        {
+            _audioSource.PlayOneShot(hitSound); 
+        }
+    }
+
+    
+    protected virtual void OnEnable()
+    {
+        Attack += PlayAttackSound;
+        Run += PlayWalkSound;
+        Death += PlayDeathSound;
+        Hit += PlayHitSound; 
+    }
+
+
+    protected virtual void OnDisable()
+    {
+        Attack -= PlayAttackSound;
+        Run -= PlayWalkSound;
+        Death -= PlayDeathSound;
+        Hit -= PlayHitSound; 
     }
 }
