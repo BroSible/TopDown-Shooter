@@ -75,7 +75,7 @@ public class BaseWeapon : MonoBehaviour
         else if(magazineSize == 0  && !isReloading)
         {
             StartCoroutine("C_reload");
-            Debug.Log("У тебя 0 патрон, поэтому Relaod");
+            Debug.Log("Нет патронов, перезарядка");
         }
 
         else
