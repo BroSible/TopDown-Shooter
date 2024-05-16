@@ -1,18 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 using UnityEngine.VFX;
 
 public class BaseWeapon : MonoBehaviour
 {
+    //Не забывай также редачить урон у пушек в префабах
     public float weaponDamage;
     public int magazineSize;
     public int maxSizeMagazine = 30;
     public float distance;
     public bool isShooting;
     public bool isReloading;
-    private KeyCode reloadKey = KeyCode.R;
+    protected KeyCode reloadKey = KeyCode.R;
     public GameObject bullet;
     public Transform shotPoint;
     public float bulletSpeed;
@@ -22,8 +24,9 @@ public class BaseWeapon : MonoBehaviour
     public AudioClip ShootGun;
     public AudioClip reloadingGun;
     public VisualEffect muzzleFlash;
-
-    //публичное свойство для передачи переменной в класс WeaponManager
+    public bool infiniteAmmo;
+    public int ammo;
+    //публичные свойства для передачи переменной в класс WeaponManager
     public bool IsReloading
     {
         get {return isReloading;}
@@ -37,13 +40,18 @@ public class BaseWeapon : MonoBehaviour
     protected virtual void Start()
     {
         audiogun = GetComponent<AudioSource>();
+
+        if(infiniteAmmo)
+        {
+            ammo = int.MaxValue;
+        }
     }
 
     protected virtual void Update()
     {
         timeSinceLastShot += Time.deltaTime;
         Debug.DrawRay(shotPoint.transform.position, shotPoint.transform.forward * distance, Color.red);
-        if(Input.GetButton("Fire1") && !isShooting && !isReloading)
+        if(Input.GetButton("Fire1") && !isShooting && !isReloading &&  magazineSize != 0)
         {
             isShooting = true;
             if(timeSinceLastShot > timeBetweenShot)
@@ -65,14 +73,13 @@ public class BaseWeapon : MonoBehaviour
             }
         }
 
-        else if(Input.GetKey(reloadKey) && !isShooting && !isReloading && magazineSize != maxSizeMagazine ) 
+        else if(Input.GetKey(reloadKey) && !isShooting && !isReloading && magazineSize != maxSizeMagazine && ammo > 0) 
         {
-
             StartCoroutine("C_reload");
             Debug.Log("Перезарядка");
         }
 
-        else if(magazineSize == 0  && !isReloading)
+        else if(magazineSize == 0  && !isReloading && ammo > 0)
         {
             StartCoroutine("C_reload");
             Debug.Log("Нет патронов, перезарядка");
@@ -91,8 +98,11 @@ public class BaseWeapon : MonoBehaviour
         isReloading = true;
         audiogun.PlayOneShot(reloadingGun);
         yield return new WaitForSeconds(3f);
-        magazineSize = maxSizeMagazine;
+        int requiredAmmo = Mathf.Min(maxSizeMagazine - magazineSize, ammo); // Вычисляем количество патронов для перезарядки 
+        magazineSize += requiredAmmo;
+        ammo -= requiredAmmo;
         isReloading = false;
+        Debug.Log("Reloaded! Current Ammo: " + magazineSize);
     }
 
 

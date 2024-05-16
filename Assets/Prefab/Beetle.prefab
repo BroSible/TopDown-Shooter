@@ -492,6 +492,7 @@ MonoBehaviour:
   damage: 40
   bonus:
   - {fileID: 3459917645873498234, guid: 6db6bc2b0c8ad24449752577b2fc483e, type: 3}
+  - {fileID: 3459917645873498234, guid: 6db6bc2b0c8ad24449752577b2fc483e, type: 3}
   spawnBonusChance: 10
 --- !u!82 &-9130442389955556748
 AudioSource:
