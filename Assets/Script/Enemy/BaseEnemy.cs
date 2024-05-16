@@ -16,6 +16,7 @@ public class BaseEnemy : MonoBehaviour
     [SerializeField] protected AudioClip attackSound;
     [SerializeField] protected AudioClip deathSound;
     [SerializeField] protected AudioClip hitSound; // Звук попадания урона
+    [SerializeField] protected AudioClip screamSound; // Звук крика
     private Transform _target;
     [SerializeField]  protected bool _isDead = false;
     protected Animator _animator;
@@ -58,14 +59,14 @@ public class BaseEnemy : MonoBehaviour
 
     protected virtual void Awake()
     {
-        _animator = GetComponent<Animator>();
-        _audioSource = GetComponent<AudioSource>();
-        _agent = GetComponent<NavMeshAgent>();
-        _rb = GetComponent<Rigidbody>();
-        _collider = GetComponent<Collider>();
+        _animator = GetComponent<Animator>(); 
+        _audioSource = GetComponent<AudioSource>(); 
+        _agent = GetComponent<NavMeshAgent>(); 
+        _rb = GetComponent<Rigidbody>(); 
+        _collider = GetComponent<Collider>(); 
 
-        // Настройка AudioSource для циклического воспроизведения звука ходьбы
-        _audioSource.loop = true; // Включаем циклическое воспроизведение
+        
+        _audioSource.loop = true; 
     }
     
     protected virtual void Start()
@@ -74,6 +75,9 @@ public class BaseEnemy : MonoBehaviour
         {
             _target = GameObject.FindWithTag("Player").transform;
         }  
+
+        
+        Invoke("PlayScreamSound", 2f); 
     }
 
     protected virtual void FixedUpdate()
@@ -254,6 +258,15 @@ public class BaseEnemy : MonoBehaviour
         if (hitSound != null)
         {
             _audioSource.PlayOneShot(hitSound); 
+        }
+    }
+
+    
+    protected virtual void PlayScreamSound()
+    {
+        if (screamSound != null)
+        {
+            _audioSource.PlayOneShot(screamSound);
         }
     }
 

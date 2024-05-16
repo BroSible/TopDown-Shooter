@@ -17,6 +17,10 @@ public class Controller : MonoBehaviour
     CameraCursor _cameraCursor;
     AudioSource _audioSource;
     public AudioClip _footStep;
+    public float footstepInterval = 0.5f;
+    private float lastFootstepTime = 0f;
+    public AudioClip _damageSound; // Звук получения урона
+    public AudioClip _deathSound; // Звук смерти
 
     void Start()
     {
@@ -29,7 +33,6 @@ public class Controller : MonoBehaviour
 
     void FixedUpdate()
     {
-        
         if (!isDead)
         {
             Walk();
@@ -43,7 +46,6 @@ public class Controller : MonoBehaviour
 
         if(isDead)
         {
-
             StartCoroutine(C_OnDefeatPlayer());
         }
         
@@ -68,6 +70,13 @@ public class Controller : MonoBehaviour
         {
             _animator.Play("Run");
             isWalking = true;
+
+            // Проигрываем звук шагов с интервалом
+            if (Time.time - lastFootstepTime > footstepInterval)
+            {
+                _audioSource.PlayOneShot(_footStep);
+                lastFootstepTime = Time.time;
+            }
         }
     }
 
@@ -76,13 +85,23 @@ public class Controller : MonoBehaviour
         playerHealth -= damage;
         if(playerHealth <= 0)
         {
-
             isDead = true;
+        }
+        else
+        {
+            // Проигрываем звук получения урона
+            FindObjectOfType<Controller>()._audioSource.PlayOneShot(FindObjectOfType<Controller>()._damageSound); 
         }
     }
 
     public IEnumerator C_OnDefeatPlayer()
     {
+        // Проигрываем звук смерти только один раз
+        if (!_audioSource.isPlaying)
+        {
+            _audioSource.PlayOneShot(_deathSound);
+        }
+
         _cameraCursor.enabled = false;
         _animator.Play("Dead1");
         
@@ -90,9 +109,4 @@ public class Controller : MonoBehaviour
         isDead = false;
         SceneManager.LoadScene("SampleScene"); 
     }
-
-
 }
-
-
-

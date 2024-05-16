@@ -472,6 +472,7 @@ MonoBehaviour:
   attackSound: {fileID: 8300000, guid: 35a1e0d8acf68f04a92cd99cef7c5fa1, type: 3}
   deathSound: {fileID: 8300000, guid: cdc5314e8277f0047a9deacdd692eb97, type: 3}
   hitSound: {fileID: 8300000, guid: a622a97e3b0701745a4520f3c902cd05, type: 3}
+  screamSound: {fileID: 8300000, guid: ccd97e827b37bd74e9e49fd6be90144a, type: 3}
   _isDead: 0
   Ground:
     serializedVersion: 2
