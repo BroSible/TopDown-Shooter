@@ -128,7 +128,7 @@ public class BaseEnemy : MonoBehaviour
         }
         else
         {
-            Hit?.Invoke(); // Вызываем событие "Hit"
+            Hit?.Invoke();
         }
     }
 
