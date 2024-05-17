@@ -20,4 +20,10 @@ public class Morita : BaseWeapon
     {
         return base.C_reload();
     }
+
+    public override void RefillAmmo()
+    {
+        base.RefillAmmo();
+    }
+
 }

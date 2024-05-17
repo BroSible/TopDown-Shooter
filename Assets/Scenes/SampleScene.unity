@@ -539,6 +539,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 5d977ffbf371f1c459680cb6866a8df2, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: -3317846758650092994, guid: 5d977ffbf371f1c459680cb6866a8df2, type: 3}
@@ -22284,7 +22288,7 @@ GameObject:
   - component: {fileID: 1160816550}
   m_Layer: 0
   m_Name: Automat(Base)
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -22429,7 +22433,8 @@ MonoBehaviour:
   reloadingGun: {fileID: 8300000, guid: 0638a891196d5a24983a365df8975a9d, type: 3}
   muzzleFlash: {fileID: 380985764}
   infiniteAmmo: 1
-  ammo: 0
+  currentAmmo: 0
+  maxAmmo: 0
 --- !u!1001 &1161939144
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -38672,7 +38677,8 @@ MonoBehaviour:
   reloadingGun: {fileID: 8300000, guid: 44bc922c8f830de4ab996251ccbfb246, type: 3}
   muzzleFlash: {fileID: 720462603}
   infiniteAmmo: 0
-  ammo: 5
+  currentAmmo: 0
+  maxAmmo: 6
 --- !u!1001 &1928725594
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -40600,7 +40606,7 @@ GameObject:
   - component: {fileID: 2094932851}
   m_Layer: 0
   m_Name: Morita
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -41647,7 +41653,8 @@ MonoBehaviour:
   reloadingGun: {fileID: 8300000, guid: 44bc922c8f830de4ab996251ccbfb246, type: 3}
   muzzleFlash: {fileID: 380985764}
   infiniteAmmo: 0
-  ammo: 300
+  currentAmmo: 0
+  maxAmmo: 200
 --- !u!1 &2095926847 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1094886371106336548, guid: cc07ef4fdd30b6a4caf7a99ec4287682, type: 3}

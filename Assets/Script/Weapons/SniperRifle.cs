@@ -19,4 +19,8 @@ public class SniperRifle : BaseWeapon
         return base.C_reload();
     }
 
+    public override void RefillAmmo()
+    {
+        base.RefillAmmo();
+    }
 }

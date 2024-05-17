@@ -25,7 +25,8 @@ public class BaseWeapon : MonoBehaviour
     public AudioClip reloadingGun;
     public VisualEffect muzzleFlash;
     public bool infiniteAmmo;
-    public int ammo;
+    public int currentAmmo;
+    public int maxAmmo;
     //публичные свойства для передачи переменной в класс WeaponManager
     public bool IsReloading
     {
@@ -40,10 +41,11 @@ public class BaseWeapon : MonoBehaviour
     protected virtual void Start()
     {
         audiogun = GetComponent<AudioSource>();
-
+        currentAmmo = maxAmmo;
         if(infiniteAmmo)
         {
-            ammo = int.MaxValue;
+            currentAmmo = int.MaxValue;
+            maxAmmo = int.MaxValue;
         }
     }
 
@@ -73,16 +75,14 @@ public class BaseWeapon : MonoBehaviour
             }
         }
 
-        else if(Input.GetKey(reloadKey) && !isShooting && !isReloading && magazineSize != maxSizeMagazine && ammo > 0) 
+        else if(Input.GetKey(reloadKey) && !isShooting && !isReloading && magazineSize != maxSizeMagazine && currentAmmo > 0) 
         {
             StartCoroutine("C_reload");
-            Debug.Log("Перезарядка");
         }
 
-        else if(magazineSize == 0  && !isReloading && ammo > 0)
+        else if(magazineSize == 0  && !isReloading && currentAmmo > 0)
         {
             StartCoroutine("C_reload");
-            Debug.Log("Нет патронов, перезарядка");
         }
 
         else
@@ -93,16 +93,20 @@ public class BaseWeapon : MonoBehaviour
         
     }
 
+    public virtual void RefillAmmo()
+    {
+        currentAmmo = maxAmmo;
+    }
+
     protected virtual IEnumerator C_reload()
     {   
         isReloading = true;
         audiogun.PlayOneShot(reloadingGun);
         yield return new WaitForSeconds(3f);
-        int requiredAmmo = Mathf.Min(maxSizeMagazine - magazineSize, ammo); // Вычисляем количество патронов для перезарядки 
+        int requiredAmmo = Mathf.Min(maxSizeMagazine - magazineSize, currentAmmo); // Вычисляем количество патронов для перезарядки 
         magazineSize += requiredAmmo;
-        ammo -= requiredAmmo;
+        currentAmmo -= requiredAmmo;
         isReloading = false;
-        Debug.Log("Reloaded! Current Ammo: " + magazineSize);
     }
 
 
