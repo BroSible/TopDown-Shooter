@@ -41647,10 +41647,10 @@ MonoBehaviour:
   shotPoint: {fileID: 1796646787}
   bulletSpeed: 120
   timeSinceLastShot: 0
-  timeBetweenShot: 0.15
+  timeBetweenShot: 0.09
   audiogun: {fileID: 2094932851}
-  ShootGun: {fileID: 8300000, guid: e098d44764de7274fa0ed0a058a6c664, type: 3}
-  reloadingGun: {fileID: 8300000, guid: 44bc922c8f830de4ab996251ccbfb246, type: 3}
+  ShootGun: {fileID: 8300000, guid: a4e21ebd2003f7843b099c8b61159406, type: 3}
+  reloadingGun: {fileID: 8300000, guid: d8101dd161a08ae40b0c21d7cc3e57dd, type: 3}
   muzzleFlash: {fileID: 380985764}
   infiniteAmmo: 0
   currentAmmo: 0
