@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Bonus : MonoBehaviour
 {
+    public static bool isMachineGun = false;
     public enum BonusType
     {
         Health,
@@ -35,6 +36,7 @@ public class Bonus : MonoBehaviour
 
             case BonusType.MachineGun:
             {
+                isMachineGun = true;
                 break;
             }
         }
@@ -47,5 +49,11 @@ public class Bonus : MonoBehaviour
             BonusProperty(other.gameObject);
             Destroy(gameObject);
         }
+    }
+
+    private IEnumerator C_MachineGunTimer()
+    {
+        yield return new WaitForSeconds(20f);
+        isMachineGun = false;
     }
 }
