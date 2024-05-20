@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &7984179930244349093
+--- !u!1001 &4947923623720453633
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -62,7 +62,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: bfa3439ec4228d648878305ec39b5ae1, type: 3}
       propertyPath: m_Name
-      value: Machinegun
+      value: Machinegun_bonus
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: bfa3439ec4228d648878305ec39b5ae1, type: 3}
       propertyPath: m_IsActive
@@ -74,40 +74,146 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: bfa3439ec4228d648878305ec39b5ae1, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 7173099068586531414}
+      addedObject: {fileID: 4302879697752610183}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: bfa3439ec4228d648878305ec39b5ae1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -7626505241780481156}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: bfa3439ec4228d648878305ec39b5ae1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2162596565510163636}
   m_SourcePrefab: {fileID: 100100000, guid: bfa3439ec4228d648878305ec39b5ae1, type: 3}
---- !u!1 &7065277594052674036 stripped
+--- !u!1 &5218519147017812816 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: bfa3439ec4228d648878305ec39b5ae1, type: 3}
-  m_PrefabInstance: {fileID: 7984179930244349093}
+  m_PrefabInstance: {fileID: 4947923623720453633}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7173099068586531414
+--- !u!114 &4302879697752610183
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7065277594052674036}
+  m_GameObject: {fileID: 5218519147017812816}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22b9e4e3d45692442bbdd5db77fb3466, type: 3}
+  m_Script: {fileID: 11500000, guid: 651367f8360ffac45a1f11384cf9dfb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponDamage: 25
-  magazineSize: 0
-  maxSizeMagazine: 30
-  distance: 0
-  isShooting: 0
-  isReloading: 0
-  bullet: {fileID: 0}
-  shotPoint: {fileID: 0}
-  bulletSpeed: 300
-  timeSinceLastShot: 0
-  timeBetweenShot: 0.1
-  audiogun: {fileID: 0}
-  ShootGun: {fileID: 0}
-  reloadingGun: {fileID: 0}
-  muzzleFlash: {fileID: 0}
-  infiniteAmmo: 1
-  currentAmmo: 0
-  maxAmmo: 0
+  bonusType: 2
+--- !u!65 &-7626505241780481156
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5218519147017812816}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.28065595, y: 0.8677945, z: 0.2519063}
+  m_Center: {x: -0.078869596, y: -0.06401403, z: 0.018291825}
+--- !u!82 &2162596565510163636
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5218519147017812816}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

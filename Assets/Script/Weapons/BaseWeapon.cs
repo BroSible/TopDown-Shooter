@@ -52,7 +52,7 @@ public class BaseWeapon : MonoBehaviour
     protected virtual void Update()
     {
         timeSinceLastShot += Time.deltaTime;
-        Debug.DrawRay(shotPoint.transform.position, shotPoint.transform.forward * distance, Color.red);
+        //Debug.DrawRay(shotPoint.transform.position, shotPoint.transform.forward * distance, Color.red);
         if(Input.GetButton("Fire1") && !isShooting && !isReloading &&  magazineSize != 0)
         {
             isShooting = true;
@@ -88,6 +88,11 @@ public class BaseWeapon : MonoBehaviour
         else
         {
             isShooting = false;
+        }
+
+        if(Bonus.isPickedMachineGun)
+        {
+            isReloading = false;
         }
 
         

@@ -56,17 +56,26 @@ public class WeaponManager : MonoBehaviour
 
     private void CheckBonusGun()
     {
-        if(Bonus.isMachineGun)
+        if(Bonus.isPickedMachineGun)
         {
             _weapons[currentWeaponIndex].SetActive(false);
             _bonusGun.SetActive(true);
+            StartCoroutine(C_MachineGunTimer());
         }
 
         else
         {
             _weapons[currentWeaponIndex].SetActive(true);
-            //_bonusGun.SetActive(false);
+            isReloading = false;
+            _bonusGun.SetActive(false);
         }
+    }
+
+    private IEnumerator C_MachineGunTimer()
+    {
+        Debug.Log("Корутина стартанула");
+        yield return new WaitForSeconds(20f);
+        Bonus.isPickedMachineGun = false;
     }
 
     private void CheckStatus()
