@@ -5,6 +5,7 @@ using UnityEngine;
 public class WeaponManager : MonoBehaviour
 { 
     public GameObject[] _weapons;
+    public GameObject _bonusGun;
     public int currentWeaponIndex = 0;
     private bool isReloading;
     private bool isShooting;
@@ -35,6 +36,7 @@ public class WeaponManager : MonoBehaviour
         }
 
         CheckStatus();
+        CheckBonusGun();
     }
 
     private void SwitchWeapon(int newIndex)
@@ -50,6 +52,21 @@ public class WeaponManager : MonoBehaviour
         _weapons[newIndex].SetActive(true);
 
         currentWeaponIndex = newIndex;
+    }
+
+    private void CheckBonusGun()
+    {
+        if(Bonus.isMachineGun)
+        {
+            _weapons[currentWeaponIndex].SetActive(false);
+            _bonusGun.SetActive(true);
+        }
+
+        else
+        {
+            _weapons[currentWeaponIndex].SetActive(true);
+            //_bonusGun.SetActive(false);
+        }
     }
 
     private void CheckStatus()

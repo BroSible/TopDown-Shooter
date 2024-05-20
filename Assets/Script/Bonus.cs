@@ -4,13 +4,17 @@ using UnityEngine;
 
 public class Bonus : MonoBehaviour
 {
+    public static bool isMachineGun = false;
     public enum BonusType
     {
         Health,
+        Ammo,
+        MachineGun,
     }
 
     public BonusType bonusType;
-    public void BonusProperty()
+
+    public void BonusProperty(GameObject player)
     {
         switch (bonusType)
         {
@@ -20,18 +24,36 @@ public class Bonus : MonoBehaviour
                 break;
             }
 
+            case BonusType.Ammo:
+            {
+                BaseWeapon baseWeapon = player.GetComponentInChildren<BaseWeapon>();
+                if (baseWeapon != null)
+                {
+                    baseWeapon.RefillAmmo();
+                }
+                break;
+            }
+
+            case BonusType.MachineGun:
+            {
+                isMachineGun = true;
+                break;
+            }
         }
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        // применяет улучшение
-
-        if(other.CompareTag("Player"))
+        if (other.CompareTag("Player"))
         {
-            BonusProperty();
+            BonusProperty(other.gameObject);
             Destroy(gameObject);
         }
-            
+    }
+
+    private IEnumerator C_MachineGunTimer()
+    {
+        yield return new WaitForSeconds(20f);
+        isMachineGun = false;
     }
 }
