@@ -31,6 +31,7 @@ public class BaseWeapon : MonoBehaviour
     public bool IsReloading
     {
         get {return isReloading;}
+        set {isReloading = value;}
     }
     
     public bool IsShooting
@@ -53,6 +54,7 @@ public class BaseWeapon : MonoBehaviour
     {
         timeSinceLastShot += Time.deltaTime;
         //Debug.DrawRay(shotPoint.transform.position, shotPoint.transform.forward * distance, Color.red);
+
         if(Input.GetButton("Fire1") && !isShooting && !isReloading &&  magazineSize != 0)
         {
             isShooting = true;
@@ -89,13 +91,6 @@ public class BaseWeapon : MonoBehaviour
         {
             isShooting = false;
         }
-
-        if(Bonus.isPickedMachineGun)
-        {
-            isReloading = false;
-        }
-
-        
     }
 
     public virtual void RefillAmmo()

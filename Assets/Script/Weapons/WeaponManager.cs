@@ -9,10 +9,13 @@ public class WeaponManager : MonoBehaviour
     public int currentWeaponIndex = 0;
     private bool isReloading;
     private bool isShooting;
+    BaseWeapon currentWeapon;
+    
     
 
     private void Start()
     {
+        currentWeapon = _weapons[currentWeaponIndex].GetComponentInParent<BaseWeapon>();
         for (int i = 1; i < _weapons.Length; i++)
         {
             _weapons[i].SetActive(false);
@@ -54,11 +57,12 @@ public class WeaponManager : MonoBehaviour
         currentWeaponIndex = newIndex;
     }
 
-    private void CheckBonusGun()
+    public void CheckBonusGun()
     {
         if(Bonus.isPickedMachineGun)
         {
             _weapons[currentWeaponIndex].SetActive(false);
+            currentWeapon.IsReloading = false;
             _bonusGun.SetActive(true);
             StartCoroutine(C_MachineGunTimer());
         }
@@ -66,7 +70,6 @@ public class WeaponManager : MonoBehaviour
         else
         {
             _weapons[currentWeaponIndex].SetActive(true);
-            isReloading = false;
             _bonusGun.SetActive(false);
         }
     }
@@ -80,7 +83,7 @@ public class WeaponManager : MonoBehaviour
 
     private void CheckStatus()
     {
-        BaseWeapon currentWeapon = _weapons[currentWeaponIndex].GetComponent<BaseWeapon>();
+        
         if (currentWeapon != null)
         {
             isReloading = currentWeapon.IsReloading;

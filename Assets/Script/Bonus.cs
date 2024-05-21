@@ -5,7 +5,7 @@ using UnityEngine;
 public class Bonus : MonoBehaviour
 {
     public static bool isPickedMachineGun = false;
-    public bool coroutineRunning = false;
+    
     public enum BonusType
     {
         Health,
