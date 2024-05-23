@@ -483,6 +483,7 @@ MonoBehaviour:
   Rock:
     serializedVersion: 2
     m_Bits: 256
+  addScore: 10
   isWalkPointSet: 0
   isAlreadyAttacked: 0
   playerInSightRange: 0
