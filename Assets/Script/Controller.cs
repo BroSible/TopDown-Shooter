@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -13,6 +14,7 @@ public class Controller : MonoBehaviour
     public float health;
     public static float playerHealth;
     public float speed;
+    public static int score = 0;
     public static bool isDead = false;
     CameraCursor _cameraCursor;
     AudioSource _audioSource;

@@ -26,6 +26,7 @@ public class BaseEnemy : MonoBehaviour
     protected NavMeshAgent _agent;
     public LayerMask Ground, Player, Rock;
     protected Vector3 walkPoint;
+    [SerializeField] protected int addScore; // показатель на который добавлять счёт
     [SerializeField] protected bool isWalkPointSet;
     [SerializeField] protected bool isAlreadyAttacked;
     [SerializeField] protected bool playerInSightRange, playerInAttackRange;
@@ -120,6 +121,7 @@ public class BaseEnemy : MonoBehaviour
         if(health <= 0)
         {
             Death?.Invoke();
+            StartCoroutine(C_AddScore());
             _isDead = true;
             gameObject.tag = "Untagged";
             Destroy(_collider);
@@ -204,6 +206,15 @@ public class BaseEnemy : MonoBehaviour
     {
         yield return new WaitForSeconds(6f);
         hasBeenTargeted = false;
+    }
+
+    public virtual IEnumerator C_AddScore()
+    {
+        for(int i = 0; i < addScore;i++)
+        {
+            yield return new WaitForSeconds(0.03f); // тут менять для ускорения или замедления начисления очков
+            Controller.score++;
+        }
     }
 
     protected virtual void SpawnRandomBonus()
