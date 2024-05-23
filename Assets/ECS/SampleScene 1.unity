@@ -27541,7 +27541,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1369817357}
-  - component: {fileID: 1369817363}
   - component: {fileID: 1369817361}
   - component: {fileID: 1369817359}
   - component: {fileID: 1369817358}
@@ -27551,6 +27550,7 @@ GameObject:
   - component: {fileID: 1369817370}
   - component: {fileID: 1369817369}
   - component: {fileID: 1369817368}
+  - component: {fileID: 1369817371}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -27721,33 +27721,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!54 &1369817363
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1369817356}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
-  m_CollisionDetection: 0
 --- !u!114 &1369817364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27764,8 +27737,9 @@ MonoBehaviour:
   - {fileID: 1160816548}
   - {fileID: 2064501203}
   - {fileID: 1928265733}
-  _bonusGun: {fileID: 0}
   currentWeaponIndex: 0
+  weaponIcons: []
+  weaponIcon: {fileID: 0}
 --- !u!81 &1369817365
 AudioListener:
   m_ObjectHideFlags: 0
@@ -27800,6 +27774,9 @@ MonoBehaviour:
   - TypeName: WeaponManagerComponent
     AssemblyName: Assembly-CSharp
     SerializedData: '{"id":{"guid":"1c5a223a-4c8f-4f03-a20a-190c8f2bf374"},"fields":{},"ports":{}}'
+  - TypeName: Krem.AppCore.Adapter.Unity.Runtime.Wrappers.UnityComponents.RigidbodyComponent
+    AssemblyName: Krem.AppCore.Adapter.Unity.Runtime
+    SerializedData: '{"id":{"guid":"f416d935-0336-4632-92ef-3ae0450f1f8f"},"fields":{},"ports":{}}'
 --- !u!114 &1369817368
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27849,6 +27826,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationSpeed: 6
+--- !u!54 &1369817371
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1369817356}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1374525031 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 467a2785b7845444db996e383d61925d, type: 3}
