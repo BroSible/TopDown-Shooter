@@ -332,10 +332,9 @@ GameObject:
   - component: {fileID: 8764847809949731858}
   - component: {fileID: 4182024834697869024}
   - component: {fileID: 7223411870415858906}
+  - component: {fileID: 6687443037994159949}
   - component: {fileID: -9130442389955556748}
   - component: {fileID: 3881145298438189717}
-  - component: {fileID: 5522504116432675711}
-  - component: {fileID: 6687443037994159949}
   m_Layer: 0
   m_Name: Beetle
   m_TagString: Enemy
@@ -451,6 +450,50 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
+--- !u!114 &6687443037994159949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2512204824543211495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8601a4784b494ed42b2cf46b22310c8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 100
+  cooldowns:
+  - 1
+  detectionDistance: 300
+  attackDistances:
+  - 3
+  walkSound: {fileID: 8300000, guid: 495a53db1d2520f49a928f1af0c3b9cc, type: 3}
+  attackSound: {fileID: 8300000, guid: 35a1e0d8acf68f04a92cd99cef7c5fa1, type: 3}
+  deathSound: {fileID: 8300000, guid: cdc5314e8277f0047a9deacdd692eb97, type: 3}
+  hitSound: {fileID: 8300000, guid: a622a97e3b0701745a4520f3c902cd05, type: 3}
+  screamSound: {fileID: 8300000, guid: ccd97e827b37bd74e9e49fd6be90144a, type: 3}
+  _isDead: 0
+  Ground:
+    serializedVersion: 2
+    m_Bits: 64
+  Player:
+    serializedVersion: 2
+    m_Bits: 128
+  Rock:
+    serializedVersion: 2
+    m_Bits: 256
+  isWalkPointSet: 0
+  isAlreadyAttacked: 0
+  playerInSightRange: 0
+  playerInAttackRange: 0
+  hasBeenTargeted: 0
+  walkPointRange: 15
+  damage: 40
+  bonus:
+  - {fileID: 2971038760509348219, guid: c19612cc36dd11041a892759d99c9576, type: 3}
+  - {fileID: 6043596817953864687, guid: fc774d0dcb00bf84eb84242d0431fb5a, type: 3}
+  spawnBonusChance: 100
 --- !u!82 &-9130442389955556748
 AudioSource:
   m_ObjectHideFlags: 0
@@ -555,67 +598,6 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2512204824543211495}
   m_Enabled: 1
---- !u!114 &5522504116432675711
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2512204824543211495}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a2c39fd6c21c1a48bed19225eae155a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  WorldTypeName: World
-  _serializedComponents:
-  - TypeName: BugComponent
-    AssemblyName: Assembly-CSharp
-    SerializedData: '{"id":{"guid":"9c3b6881-d8a4-4d42-9ab9-2637cdfad1bc"},"fields":{},"ports":{}}'
---- !u!114 &6687443037994159949
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2512204824543211495}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8601a4784b494ed42b2cf46b22310c8a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  health: 100
-  cooldowns:
-  - 1
-  detectionDistance: 300
-  attackDistances:
-  - 3
-  walkSound: {fileID: 8300000, guid: 495a53db1d2520f49a928f1af0c3b9cc, type: 3}
-  attackSound: {fileID: 8300000, guid: 35a1e0d8acf68f04a92cd99cef7c5fa1, type: 3}
-  deathSound: {fileID: 8300000, guid: cdc5314e8277f0047a9deacdd692eb97, type: 3}
-  hitSound: {fileID: 8300000, guid: a622a97e3b0701745a4520f3c902cd05, type: 3}
-  screamSound: {fileID: 8300000, guid: ccd97e827b37bd74e9e49fd6be90144a, type: 3}
-  _isDead: 0
-  Ground:
-    serializedVersion: 2
-    m_Bits: 64
-  Player:
-    serializedVersion: 2
-    m_Bits: 128
-  Rock:
-    serializedVersion: 2
-    m_Bits: 256
-  isWalkPointSet: 0
-  isAlreadyAttacked: 0
-  playerInSightRange: 0
-  playerInAttackRange: 0
-  hasBeenTargeted: 0
-  walkPointRange: 15
-  damage: 40
-  bonus:
-  - {fileID: 2971038760509348219, guid: c19612cc36dd11041a892759d99c9576, type: 3}
-  - {fileID: 6043596817953864687, guid: fc774d0dcb00bf84eb84242d0431fb5a, type: 3}
-  spawnBonusChance: 100
 --- !u!1 &2618841886899545782
 GameObject:
   m_ObjectHideFlags: 0
