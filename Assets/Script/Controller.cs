@@ -106,8 +106,8 @@ public class Controller : MonoBehaviour
 
         _cameraCursor.enabled = false;
         _animator.Play("Dead1");
-        
         yield return new WaitForSeconds(2f);
+        score = 0;
         isDead = false;
         SceneManager.LoadScene("SampleScene"); 
     }
