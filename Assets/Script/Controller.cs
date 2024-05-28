@@ -23,6 +23,9 @@ public class Controller : MonoBehaviour
     private float lastFootstepTime = 0f;
     public AudioClip _damageSound; // Звук получения урона
     public AudioClip _deathSound; // Звук смерти
+    public GameObject mainCamera;
+    public GameObject deathCamera;
+    public BaseWeapon _baseWeapon;
 
     void Start()
     {
@@ -35,6 +38,7 @@ public class Controller : MonoBehaviour
 
     void FixedUpdate()
     {
+        
         if (!isDead)
         {
             Walk();
@@ -48,6 +52,7 @@ public class Controller : MonoBehaviour
 
         if(isDead)
         {
+            _baseWeapon = GetComponentInChildren<BaseWeapon>();
             StartCoroutine(C_OnDefeatPlayer());
         }
         
@@ -88,6 +93,7 @@ public class Controller : MonoBehaviour
         if(playerHealth <= 0)
         {
             isDead = true;
+            
         }
         else
         {
@@ -104,11 +110,12 @@ public class Controller : MonoBehaviour
             _audioSource.PlayOneShot(_deathSound);
         }
 
+        _baseWeapon.enabled = false;
         _cameraCursor.enabled = false;
         _animator.Play("Dead1");
+        gameObject.tag = "Untagged";
         yield return new WaitForSeconds(2f);
-        score = 0;
-        isDead = false;
-        SceneManager.LoadScene("SampleScene"); 
+        mainCamera.SetActive(false);
+        deathCamera.SetActive(true);
     }
 }

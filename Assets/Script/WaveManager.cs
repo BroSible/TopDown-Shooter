@@ -5,7 +5,7 @@ public class WaveManager : MonoBehaviour
 {
     public GameObject beetlePrefab;
     public Transform[] spawnPoints; 
-    public int currentWave = 1;
+    public static int currentWave = 1;
     public int maxBeetle;
     public int maxAddtoWave = 2;
     public bool isSpawning = false;

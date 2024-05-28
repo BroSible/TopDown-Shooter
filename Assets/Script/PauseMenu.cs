@@ -39,7 +39,7 @@ public class PauseMenu : MonoBehaviour
         
         cameraController.enabled = false;
         _weaponManager.enabled = false;
-        _weapons[_weaponManager.currentWeaponIndex].enabled = false;
+        _weapons[WeaponManager.currentWeaponIndex].enabled = false;
     }
 
     public void ResumeGame()
@@ -51,7 +51,7 @@ public class PauseMenu : MonoBehaviour
         
         StartCoroutine(EnableCameraWithDelay());
         _weaponManager.enabled = true;
-        _weapons[_weaponManager.currentWeaponIndex].enabled = true;
+        _weapons[WeaponManager.currentWeaponIndex].enabled = true;
     }
 
     public void GoToMainMenu()
