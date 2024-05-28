@@ -494,7 +494,7 @@ MonoBehaviour:
   bonus:
   - {fileID: 2971038760509348219, guid: c19612cc36dd11041a892759d99c9576, type: 3}
   - {fileID: 6043596817953864687, guid: fc774d0dcb00bf84eb84242d0431fb5a, type: 3}
-  spawnBonusChance: 100
+  spawnBonusChance: 20
 --- !u!82 &-9130442389955556748
 AudioSource:
   m_ObjectHideFlags: 0

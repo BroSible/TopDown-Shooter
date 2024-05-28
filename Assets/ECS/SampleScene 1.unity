@@ -27738,8 +27738,11 @@ MonoBehaviour:
   - {fileID: 2064501203}
   - {fileID: 1928265733}
   currentWeaponIndex: 0
-  weaponIcons: []
-  weaponIcon: {fileID: 0}
+  weaponIcons:
+  - {fileID: 2800000, guid: 688e8cc0fb2f69840bbf4a15901c7491, type: 3}
+  - {fileID: 2800000, guid: 9ef078aa32270fd44ab9b8adbe726c07, type: 3}
+  - {fileID: 2800000, guid: ab5257f1b2ad02e44aeee2e889f3aa1c, type: 3}
+  weaponIcon: {fileID: 914798955}
 --- !u!81 &1369817365
 AudioListener:
   m_ObjectHideFlags: 0
@@ -36657,6 +36660,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ammoText: {fileID: 731822711}
   healthText: {fileID: 649417921}
+  scoreText: {fileID: 0}
   _weapons:
   - {fileID: 1160816551}
   - {fileID: 2094932852}
