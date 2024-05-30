@@ -5,8 +5,8 @@ using UnityEngine.UI;
 public class WeaponManager : MonoBehaviour
 { 
     public GameObject[] _weapons;
-    //public GameObject _bonusGun;
-    public int currentWeaponIndex = 0;
+    public GameObject _bonusGun;
+    public static int currentWeaponIndex = 0;
     private bool isReloading;
     private bool isShooting;
     BaseWeapon currentWeapon;
@@ -17,7 +17,6 @@ public class WeaponManager : MonoBehaviour
 
     private void Start()
     {
-        currentWeapon = _weapons[currentWeaponIndex].GetComponentInParent<BaseWeapon>();
         for (int i = 1; i < _weapons.Length; i++)
         {
             _weapons[i].SetActive(false);
@@ -27,6 +26,7 @@ public class WeaponManager : MonoBehaviour
 
     private void Update()
     {
+        currentWeapon = _weapons[currentWeaponIndex].GetComponentInChildren<BaseWeapon>();
         if (Input.GetKeyDown(KeyCode.Alpha1) && !isReloading && !isShooting)
         {
             SwitchWeapon(0);
@@ -40,8 +40,13 @@ public class WeaponManager : MonoBehaviour
             SwitchWeapon(2);
         }
 
+        if(Bonus.isPickedMachineGun)
+        {
+            currentWeapon.IsReloading = false;
+        }
+
         CheckStatus();
-        //CheckBonusGun();
+        CheckBonusGun();
     }
 
     private void SwitchWeapon(int newIndex)
@@ -55,26 +60,25 @@ public class WeaponManager : MonoBehaviour
         _weapons[currentWeaponIndex].SetActive(false);
         _weapons[newIndex].SetActive(true);
         currentWeaponIndex = newIndex;
-        currentWeapon = _weapons[currentWeaponIndex].GetComponentInParent<BaseWeapon>();
         
         UpdateWeaponIcon();
     }
 
-    // public void CheckBonusGun()
-    // {
-    //     if (Bonus.isPickedMachineGun)
-    //     {
-    //         _weapons[currentWeaponIndex].SetActive(false);
-    //         currentWeapon.IsReloading = false;
-    //         _bonusGun.SetActive(true);
-    //         StartCoroutine(C_MachineGunTimer());
-    //     }
-    //     else
-    //     {
-    //         _weapons[currentWeaponIndex].SetActive(true);
-    //         _bonusGun.SetActive(false);
-    //     }
-    // }
+    public void CheckBonusGun()
+    {
+        if (Bonus.isPickedMachineGun)
+        {
+            _bonusGun.SetActive(true);
+            _weapons[currentWeaponIndex].SetActive(false);
+            StartCoroutine(C_MachineGunTimer());
+        }
+
+        else
+        {
+            _weapons[currentWeaponIndex].SetActive(true);
+            _bonusGun.SetActive(false);
+        }
+    }
 
     private IEnumerator C_MachineGunTimer()
     {

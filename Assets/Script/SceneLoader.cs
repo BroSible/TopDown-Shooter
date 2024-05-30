@@ -10,9 +10,13 @@ public class SceneLoader : MonoBehaviour
     public GameObject loaderUI;
     public Slider progressSlider;
     public Animator transition;
+    public static Scene MainMenu;
+    public static string[] scenes;  
+    public static int currentSceneIndex = 0;  
 
     public void Start()
     {
+        scenes = new string[] { "Menu", "SampleScene"};  
         StartCoroutine(C_LoadScene());
     }
 
@@ -22,7 +26,7 @@ public class SceneLoader : MonoBehaviour
         loaderUI.SetActive(true);
         transition.SetTrigger("Start");
 
-        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync("SampleScene"); //Тут поменять сцену на нужную
+        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(scenes[currentSceneIndex]); //Тут поменять сцену на нужную
         asyncOperation.allowSceneActivation = false;
         float progress = 0;
 
