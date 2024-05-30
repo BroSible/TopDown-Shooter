@@ -17,7 +17,7 @@ public class BaseEnemy : MonoBehaviour
     [SerializeField] protected AudioClip deathSound;
     [SerializeField] protected AudioClip hitSound; // Звук попадания урона
     [SerializeField] protected AudioClip screamSound; // Звук крика
-    private Transform _target;
+    protected Transform _target;
     [SerializeField]  protected bool _isDead = false;
     protected Animator _animator;
     protected Rigidbody _rb;
@@ -191,7 +191,6 @@ public class BaseEnemy : MonoBehaviour
         {
             Attack?.Invoke();
             Controller.TakeDamage(damage); 
-            Debug.Log(Controller.playerHealth);
             isAlreadyAttacked = true;
             Invoke(nameof(ResetAttack),cooldowns[0]); 
         }

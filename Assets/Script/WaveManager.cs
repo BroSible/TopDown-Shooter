@@ -3,7 +3,7 @@ using TMPro;  // Необходимо добавить пространство 
 
 public class WaveManager : MonoBehaviour
 {
-    public GameObject beetlePrefab;
+    public GameObject[] beetlePrefab;
     public Transform[] spawnPoints; 
     public static int currentWave = 1;
     public int maxBeetle;
@@ -70,8 +70,8 @@ public class WaveManager : MonoBehaviour
         {
             int randomIndex = Random.Range(0, spawnPoints.Length);
             Vector3 spawnPoint = spawnPoints[randomIndex].position;
-
-            GameObject newBeetle = Instantiate(beetlePrefab, spawnPoint, Quaternion.identity);
+            int randomIndexPrefab = Random.Range(0, beetlePrefab.Length);
+            GameObject newBeetle = Instantiate(beetlePrefab[randomIndexPrefab], spawnPoint, Quaternion.identity);
             newBeetle.SetActive(true);
 
             beetleSpawned++; 
