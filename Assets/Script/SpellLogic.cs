@@ -12,7 +12,6 @@ public class SpellLogic : MonoBehaviour
             Controller.TakeDamage(damage);
             Destroy(gameObject);
         }
-        Destroy(gameObject);
     }
    
 }

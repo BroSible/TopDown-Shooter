@@ -727,12 +727,12 @@ MonoBehaviour:
   - 1.5
   detectionDistance: 5000
   attackDistances:
-  - 10
-  walkSound: {fileID: 0}
-  attackSound: {fileID: 0}
-  deathSound: {fileID: 0}
-  hitSound: {fileID: 0}
-  screamSound: {fileID: 0}
+  - 20
+  walkSound: {fileID: 8300000, guid: 495a53db1d2520f49a928f1af0c3b9cc, type: 3}
+  attackSound: {fileID: 8300000, guid: 35a1e0d8acf68f04a92cd99cef7c5fa1, type: 3}
+  deathSound: {fileID: 8300000, guid: ccd97e827b37bd74e9e49fd6be90144a, type: 3}
+  hitSound: {fileID: 8300000, guid: a622a97e3b0701745a4520f3c902cd05, type: 3}
+  screamSound: {fileID: 8300000, guid: ccd97e827b37bd74e9e49fd6be90144a, type: 3}
   _isDead: 0
   Ground:
     serializedVersion: 2
