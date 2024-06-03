@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class Intro : MonoBehaviour
 {
-    public float wait_time = 5f;
+    public float wait_time = 12f;
     void Start()
     {
             StartCoroutine(wait_for_intro());

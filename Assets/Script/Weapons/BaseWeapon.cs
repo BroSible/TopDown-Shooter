@@ -74,6 +74,8 @@ public class BaseWeapon : MonoBehaviour
 
                 timeSinceLastShot = 0f;
                 magazineSize--;
+                Debug.Log($"Оставшиеся патроны в магазине: {magazineSize}"); 
+                Debug.Log($"Оставшиеся патроны: {currentAmmo}"); 
             }
         }
 
@@ -107,6 +109,8 @@ public class BaseWeapon : MonoBehaviour
         magazineSize += requiredAmmo;
         currentAmmo -= requiredAmmo;
         isReloading = false;
+        Debug.Log($"Оставшиеся патроны в магазине: {magazineSize}"); 
+        Debug.Log($"Оставшиеся патроны: {currentAmmo}"); 
     }
 
 

@@ -89,11 +89,12 @@ public class Controller : MonoBehaviour
 
     public static void TakeDamage(float damage)
     {
+        Debug.Log($"Игрок получил {damage} урона."); // Добавлено: лог урона
         playerHealth -= damage;
         if(playerHealth <= 0)
         {
             isDead = true;
-            
+            Debug.Log("Игрок умер!"); // Добавлено: лог смерти
         }
         else
         {
