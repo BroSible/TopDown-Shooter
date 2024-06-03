@@ -62,6 +62,9 @@ public class WaveManager : MonoBehaviour
         }
 
         waveText.text = $"Волна: {currentWave}";  
+        
+        // Добавлено
+        Debug.Log($"Текущая волна: {currentWave}");
     }
 
     public void SpawnEnemy()

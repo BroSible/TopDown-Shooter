@@ -116,6 +116,7 @@ public class BaseEnemy : MonoBehaviour
 
     public virtual void TakeDamage(float damage)
     {
+        Debug.Log($"Враг получил {damage} урона."); // Добавлено: лог урона
         health -= damage;
 
         if(health <= 0)
@@ -190,6 +191,7 @@ public class BaseEnemy : MonoBehaviour
         if(!isAlreadyAttacked)
         {
             Attack?.Invoke();
+            Debug.Log("Враг атакует!"); // Добавлено: лог атаки
             Controller.TakeDamage(damage); 
             isAlreadyAttacked = true;
             Invoke(nameof(ResetAttack),cooldowns[0]); 
