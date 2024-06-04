@@ -2431,7 +2431,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.023520835, y: 0.20737039}
   m_AnchorMax: {x: 0.22947916, y: 0.25640744}
-  m_AnchoredPosition: {x: 10.661011, y: 62}
+  m_AnchoredPosition: {x: 10.661133, y: 62}
   m_SizeDelta: {x: -225.62384, y: -23}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &101220279
@@ -22975,7 +22975,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -3.800003, y: 60.8}
+  m_AnchoredPosition: {x: -3.8000183, y: 60.8}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &993247338
@@ -31925,7 +31925,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -587.2241, y: 57.84967}
+  m_AnchoredPosition: {x: -587.2241, y: 57.84961}
   m_SizeDelta: {x: -1760, y: -1050}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1363449547
@@ -32679,7 +32679,6 @@ MonoBehaviour:
   _deathSound: {fileID: 8300000, guid: df64a5c0e02dde04bb9fde041398f874, type: 3}
   mainCamera: {fileID: 1313248294}
   deathCamera: {fileID: 1963412149}
-  _baseWeapon: {fileID: 0}
 --- !u!54 &1369817363
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -45523,7 +45522,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.022000002, y: 0.15300001}
   m_AnchorMax: {x: 0.22947916, y: 0.2}
-  m_AnchoredPosition: {x: 14.66394, y: -93}
+  m_AnchoredPosition: {x: 14.6640625, y: -93}
   m_SizeDelta: {x: -227.62384, y: -21}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1881913297
