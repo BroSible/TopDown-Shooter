@@ -1263,6 +1263,8 @@ MonoBehaviour:
   deathSound: {fileID: 8300000, guid: cdc5314e8277f0047a9deacdd692eb97, type: 3}
   hitSound: {fileID: 8300000, guid: a622a97e3b0701745a4520f3c902cd05, type: 3}
   screamSound: {fileID: 8300000, guid: ccd97e827b37bd74e9e49fd6be90144a, type: 3}
+  bonusSpawnSound: {fileID: 8300000, guid: 0088822c36471fd4c96c44b77cc5ba3e, type: 3}
+  bonusPickupSound: {fileID: 8300000, guid: f0e9189ee9ff67b46b64c3cbf20dfa78, type: 3}
   _isDead: 0
   Ground:
     serializedVersion: 2
@@ -1284,7 +1286,7 @@ MonoBehaviour:
   bonus:
   - {fileID: 2971038760509348219, guid: c19612cc36dd11041a892759d99c9576, type: 3}
   - {fileID: 6043596817953864687, guid: fc774d0dcb00bf84eb84242d0431fb5a, type: 3}
-  spawnBonusChance: 20
+  spawnBonusChance: 100
 --- !u!82 &5646264844765232065
 AudioSource:
   m_ObjectHideFlags: 0
