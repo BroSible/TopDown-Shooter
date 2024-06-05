@@ -7,9 +7,9 @@ public class ShootingBeetle : BaseEnemy
     protected override void Start()
     {
         base.Start();
-        Attack += PlayAttackAnimation;
-        Run += PlayRunAnimation;
-        Death += PlayDeathAnimation;
+        Attack += PlayShootingBeetleAttackAnimation;
+        Run += PlayShootingBeetleRunAnimation;
+        Death += PlayShootingBeetleDeathAnimation;
     }
 
     public Transform spellPosition;
@@ -21,6 +21,7 @@ public class ShootingBeetle : BaseEnemy
 
         if(!isAlreadyAttacked)
         {
+            OnAttack();
             StartCoroutine(SpellAttacking());
             isAlreadyAttacked = true;
             Invoke(nameof(ResetAttack),cooldowns[0]); 
@@ -47,17 +48,17 @@ public class ShootingBeetle : BaseEnemy
         yield return new WaitForSeconds(0.3f);
     }
 
-    private void PlayAttackAnimation()
+    private void PlayShootingBeetleAttackAnimation()
     {
         _animator.Play("AttackBug");
     }
 
-    private void PlayRunAnimation()
+    private void PlayShootingBeetleRunAnimation()
     {
         _animator.Play("RunBug");
     }
 
-    private void PlayDeathAnimation()
+    private void PlayShootingBeetleDeathAnimation()
     {
         _animator.Play("DeathBug");
     }

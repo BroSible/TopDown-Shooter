@@ -8,9 +8,9 @@ public class MeleeBeetle : BaseEnemy
     protected override void Start()
     {
         base.Start();
-        Attack += PlayAttackAnimation;
-        Run += PlayRunAnimation;
-        Death += PlayDeathAnimation;
+        Attack += PlayMeleeBeetleAttackAnimation;
+        Run += PlayMeleeBeetleRunAnimation;
+        Death += PlayMeleeBeetleDeathAnimation;
     }
 
     protected override void Awake()
@@ -64,17 +64,17 @@ public class MeleeBeetle : BaseEnemy
         return base.C_ResetFollowingPlayer();
     }
 
-    private void PlayAttackAnimation()
+    private void PlayMeleeBeetleAttackAnimation()
     {
         _animator.Play("AttackBug");
     }
 
-    private void PlayRunAnimation()
+    private void PlayMeleeBeetleRunAnimation()
     {
         _animator.Play("RunBug");
     }
 
-    private void PlayDeathAnimation()
+    private void PlayMeleeBeetleDeathAnimation()
     {
         _animator.Play("DeathBug");
     }
