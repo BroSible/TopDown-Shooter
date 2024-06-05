@@ -4,6 +4,14 @@ using UnityEngine;
 
 public class ShootingBeetle : BaseEnemy
 {
+    protected override void Start()
+    {
+        base.Start();
+        Attack += PlayShootingBeetleAttackAnimation;
+        Run += PlayShootingBeetleRunAnimation;
+        Death += PlayShootingBeetleDeathAnimation;
+    }
+
     public Transform spellPosition;
     public GameObject spell;
     protected override void AttackPlayer()
@@ -13,6 +21,7 @@ public class ShootingBeetle : BaseEnemy
 
         if(!isAlreadyAttacked)
         {
+            OnAttack();
             StartCoroutine(SpellAttacking());
             isAlreadyAttacked = true;
             Invoke(nameof(ResetAttack),cooldowns[0]); 
@@ -37,6 +46,21 @@ public class ShootingBeetle : BaseEnemy
 
         
         yield return new WaitForSeconds(0.3f);
+    }
+
+    private void PlayShootingBeetleAttackAnimation()
+    {
+        _animator.Play("AttackBug");
+    }
+
+    private void PlayShootingBeetleRunAnimation()
+    {
+        _animator.Play("RunBug");
+    }
+
+    private void PlayShootingBeetleDeathAnimation()
+    {
+        _animator.Play("DeathBug");
     }
 
 }

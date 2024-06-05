@@ -192,12 +192,17 @@ public class BaseEnemy : MonoBehaviour
         
         if(!isAlreadyAttacked)
         {
-            Attack?.Invoke();
+            OnAttack();
             Debug.Log("Враг атакует!"); // Добавлено: лог атаки
             Controller.TakeDamage(damage); 
             isAlreadyAttacked = true;
             Invoke(nameof(ResetAttack),cooldowns[0]); 
         }
+    }
+
+    protected virtual void OnAttack()
+    {
+        Attack?.Invoke();
     }
 
     protected virtual void ResetAttack()

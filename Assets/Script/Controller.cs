@@ -25,7 +25,7 @@ public class Controller : MonoBehaviour
     public AudioClip _deathSound; // Звук смерти
     public GameObject mainCamera;
     public GameObject deathCamera;
-    public BaseWeapon _baseWeapon;
+    private BaseWeapon _baseWeapon;
 
     void Start()
     {

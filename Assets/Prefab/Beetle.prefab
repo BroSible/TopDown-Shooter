@@ -1255,7 +1255,7 @@ MonoBehaviour:
   health: 100
   cooldowns:
   - 1
-  detectionDistance: 300
+  detectionDistance: 5000
   attackDistances:
   - 3
   walkSound: {fileID: 8300000, guid: 495a53db1d2520f49a928f1af0c3b9cc, type: 3}

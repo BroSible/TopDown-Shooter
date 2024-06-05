@@ -33018,7 +33018,6 @@ MonoBehaviour:
   _deathSound: {fileID: 8300000, guid: df64a5c0e02dde04bb9fde041398f874, type: 3}
   mainCamera: {fileID: 1313248294}
   deathCamera: {fileID: 1963412149}
-  _baseWeapon: {fileID: 0}
 --- !u!54 &1369817363
 Rigidbody:
   m_ObjectHideFlags: 0
