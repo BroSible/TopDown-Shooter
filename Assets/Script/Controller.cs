@@ -116,7 +116,14 @@ public class Controller : MonoBehaviour
         _animator.Play("Dead1");
         gameObject.tag = "Untagged";
         yield return new WaitForSeconds(2f);
+        
+        this.gameObject.SetActive(false);
         mainCamera.SetActive(false);
         deathCamera.SetActive(true);
+    }
+
+    public void StopAudio()
+    {
+        _audioSource.Stop();
     }
 }
