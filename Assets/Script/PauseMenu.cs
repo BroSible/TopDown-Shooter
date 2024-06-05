@@ -40,6 +40,7 @@ public class PauseMenu : MonoBehaviour
         cameraController.enabled = false;
         _weaponManager.enabled = false;
         _weapons[WeaponManager.currentWeaponIndex].enabled = false;
+        Debug.Log("Игра поставлена на паузу.");
     }
 
     public void ResumeGame()
@@ -52,6 +53,7 @@ public class PauseMenu : MonoBehaviour
         StartCoroutine(EnableCameraWithDelay());
         _weaponManager.enabled = true;
         _weapons[WeaponManager.currentWeaponIndex].enabled = true;
+        Debug.Log("Игра возобновлена.");
     }
 
     public void GoToMainMenu()
@@ -71,4 +73,3 @@ public class PauseMenu : MonoBehaviour
         cameraController.enabled = true;
     }
 }
-

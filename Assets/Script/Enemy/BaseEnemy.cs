@@ -17,6 +17,8 @@ public class BaseEnemy : MonoBehaviour
     [SerializeField] protected AudioClip deathSound;
     [SerializeField] protected AudioClip hitSound; // Звук попадания урона
     [SerializeField] protected AudioClip screamSound; // Звук крика
+    [SerializeField] protected AudioClip bonusSpawnSound; // Звук спавна бонуса
+    [SerializeField] protected AudioClip bonusPickupSound; // Звук подбора бонуса
     protected Transform _target;
     [SerializeField]  protected bool _isDead = false;
     protected Animator _animator;
@@ -116,6 +118,7 @@ public class BaseEnemy : MonoBehaviour
 
     public virtual void TakeDamage(float damage)
     {
+        Debug.Log($"Враг получил {damage} урона."); // Добавлено: лог урона
         health -= damage;
 
         if(health <= 0)
@@ -190,6 +193,7 @@ public class BaseEnemy : MonoBehaviour
         if(!isAlreadyAttacked)
         {
             Attack?.Invoke();
+            Debug.Log("Враг атакует!"); // Добавлено: лог атаки
             Controller.TakeDamage(damage); 
             isAlreadyAttacked = true;
             Invoke(nameof(ResetAttack),cooldowns[0]); 
@@ -223,7 +227,13 @@ public class BaseEnemy : MonoBehaviour
         if(randomNumber <= spawnBonusChance)
         {
             int randomIndex = Random.Range(0, bonus.Length);
-            Instantiate(bonus[randomIndex], transform.position + Vector3.up * 3f, Quaternion.identity);
+            GameObject newBonus = Instantiate(bonus[randomIndex], transform.position + Vector3.up * 3f, Quaternion.identity);
+            newBonus.SetActive(true); // Важно активировать бонус
+
+            if (bonusSpawnSound != null)
+            {
+                _audioSource.PlayOneShot(bonusSpawnSound);
+            }
         }
     }
 
@@ -277,6 +287,14 @@ public class BaseEnemy : MonoBehaviour
         if (screamSound != null)
         {
             _audioSource.PlayOneShot(screamSound);
+        }
+    }
+    
+    protected virtual void PlayBonusPickupSound()
+    {
+        if (bonusPickupSound != null)
+        {
+            _audioSource.PlayOneShot(bonusPickupSound);
         }
     }
 

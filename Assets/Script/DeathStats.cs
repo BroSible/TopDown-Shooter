@@ -24,6 +24,7 @@ public class DeathStats : MonoBehaviour
     {
         if(Controller.isDead && !isCalculated)
         {
+            Debug.Log("Игрок умер! Выводим статистику."); 
             StartCoroutine(getScore());
             StartCoroutine(getSurvivedWave());
             isCalculated = true;
