@@ -12,8 +12,8 @@ public class WaveManager : MonoBehaviour
     public int beetleSpawned = 0;   
     public float timeToInterval;
     private float interval = 5f;
-    public float timeToStartCoroutine;
-    private float timeBetweenStartCoroutine = 5f;
+    public float timeToSpawn;
+    [SerializeField] private float timeBetweenSpawn = 5f;
 
     public enum WaveState
     {
@@ -27,7 +27,7 @@ public class WaveManager : MonoBehaviour
 
     void Update()
     {
-        timeToStartCoroutine += Time.deltaTime;
+        timeToSpawn += Time.deltaTime;
 
         if (!EnemyIsAlive() && isSpawning && beetleSpawned == maxBeetle)
         {
@@ -38,10 +38,10 @@ public class WaveManager : MonoBehaviour
         {
             case WaveState.Active:
             {
-                if(timeToStartCoroutine > timeBetweenStartCoroutine)
+                if(timeToSpawn > timeBetweenSpawn)
                 {
                     SpawnEnemy();
-                    timeToStartCoroutine = 0;
+                    timeToSpawn = 0;
                 }
 
                 break;
@@ -86,6 +86,12 @@ public class WaveManager : MonoBehaviour
     {
         isSpawning = false;
         beetleSpawned = 0;
+
+        if(timeBetweenSpawn != 0.5f)
+        {
+            timeBetweenSpawn -= 0.25f;
+        }
+
         maxBeetle += maxAddtoWave;
         currentState = WaveState.Active;
         currentWave++;
