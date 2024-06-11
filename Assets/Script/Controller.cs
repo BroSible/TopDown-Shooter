@@ -62,19 +62,20 @@ public class Controller : MonoBehaviour
     {
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
-        movement = new Vector3(moveHorizontal,0,moveVertical);
-        transform.Translate(movement * speed * Time.deltaTime,Space.World);
+        movement = new Vector3(moveHorizontal, 0, moveVertical);
 
-        if (movement == Vector3.zero && !isDead) 
-        { 
+        if (movement == Vector3.zero && !isDead)
+        {
             _rb.velocity = Vector3.zero;
             isWalking = false;
             _animator.Play("Idle");
             _audioSource.clip = null;
-        } 
+        }
 
         else
         {
+            _rb.MovePosition(transform.position + movement * speed * Time.deltaTime);
+            
             _animator.Play("Run");
             isWalking = true;
 
@@ -86,6 +87,7 @@ public class Controller : MonoBehaviour
             }
         }
     }
+
 
     public static void TakeDamage(float damage)
     {
@@ -116,7 +118,14 @@ public class Controller : MonoBehaviour
         _animator.Play("Dead1");
         gameObject.tag = "Untagged";
         yield return new WaitForSeconds(2f);
+        
+        this.gameObject.SetActive(false);
         mainCamera.SetActive(false);
         deathCamera.SetActive(true);
+    }
+
+    public void StopAudio()
+    {
+        _audioSource.Stop();
     }
 }
