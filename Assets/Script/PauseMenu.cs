@@ -7,6 +7,9 @@ public class PauseMenu : MonoBehaviour
 {
     public GameObject pauseMenu;
     public GameObject playerUI;
+    public GameObject settingMenu;
+    public GameObject MenuGraphic;
+     public GameObject AudioMenu;
     public bool isPaused;
     public CameraCursor cameraController = new CameraCursor();
     public BaseWeapon[] _weapons;
@@ -32,6 +35,7 @@ public class PauseMenu : MonoBehaviour
     public void PauseGame()
     {
         pauseMenu.SetActive(true);
+
         playerUI.SetActive(false);
         Time.timeScale = 0f;
         isPaused = true;
@@ -46,6 +50,10 @@ public class PauseMenu : MonoBehaviour
     public void ResumeGame()
     {
         pauseMenu.SetActive(false);
+        settingMenu.SetActive(false);
+        MenuGraphic.SetActive(false);
+        AudioMenu.SetActive(false);
+
         playerUI.SetActive(true);
         Time.timeScale = 1f;
         isPaused = false;
@@ -58,8 +66,13 @@ public class PauseMenu : MonoBehaviour
 
     public void GoToMainMenu()
     {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("MainMenu");
+        //Time.timeScale = 1f;
+        Controller.score = 0;
+        WaveManager.currentWave = 1;
+        Controller.isDead = false;
+        SceneLoader.currentSceneIndex = 0;
+        WeaponManager.currentWeaponIndex = 0;
+        SceneManager.LoadSceneAsync("Loading");
     }
 
     public void QuitGame()

@@ -378,7 +378,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff5cb201698b10848a65eb9ebe60d95d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wait_time: 12
+  videoPlayer: {fileID: 991798414}
 --- !u!1 &1131364338
 GameObject:
   m_ObjectHideFlags: 0
@@ -485,7 +485,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff5cb201698b10848a65eb9ebe60d95d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wait_time: 21
+  videoPlayer: {fileID: 0}
 --- !u!114 &1131364343
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -16,7 +16,7 @@ public class SceneLoader : MonoBehaviour
 
     public void Start()
     {
-        scenes = new string[] { "Menu", "SampleScene"};  
+        scenes = new string[] { "Menu", "CutScene", "SampleScene"};  
         StartCoroutine(C_LoadScene());
     }
 

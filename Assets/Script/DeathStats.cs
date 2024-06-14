@@ -35,7 +35,7 @@ public class DeathStats : MonoBehaviour
     {
         for(int i = 0; i < Controller.score; i++)
         {
-            yield return new WaitForSeconds(0.05f); 
+            yield return new WaitForSeconds(0.005f); 
             totalScore++;
             scoreText.text = totalScore.ToString();
         }
