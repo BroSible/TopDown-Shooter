@@ -26,6 +26,7 @@ public class Controller : MonoBehaviour
     public GameObject mainCamera;
     public GameObject deathCamera;
     private BaseWeapon _baseWeapon;
+    public PauseMenu pauseMenu;
 
     void Start()
     {
@@ -53,6 +54,7 @@ public class Controller : MonoBehaviour
         if(isDead)
         {
             _baseWeapon = GetComponentInChildren<BaseWeapon>();
+            pauseMenu.enabled = false;
             StartCoroutine(C_OnDefeatPlayer());
         }
         
