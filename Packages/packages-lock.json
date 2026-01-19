@@ -20,7 +20,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.cinemachine": {
-      "version": "2.10.3",
+      "version": "2.10.5",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -267,13 +267,6 @@
         "com.unity.modules.jsonserialize": "1.0.0"
       },
       "url": "https://packages.unity.com"
-    },
-    "digital.krem.appcore": {
-      "version": "https://git.krem.digital/appcore/AppCore.git",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "074c6d592ca36d3f26247a7fde4910d5c7cdb3e5"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",
