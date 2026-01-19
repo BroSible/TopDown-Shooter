@@ -1,4 +1,5 @@
 using UnityEngine;
+using Cinemachine;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -6,8 +7,8 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement Settings")]
     [SerializeField] private float walkSpeed = 5f;
     [SerializeField] private float sprintSpeed = 8f;
-    [SerializeField] private float rotationSpeed = 10f;
     [SerializeField] private float acceleration = 10f;
+    [SerializeField] private float deceleration = 20f; 
     #endregion
 
     #region Gravity Settings
@@ -15,6 +16,14 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float gravity = -9.81f;
     [SerializeField] private float groundCheckDistance = 0.2f;
     [SerializeField] private LayerMask groundMask;
+    #endregion
+
+    #region Camera Settings
+    [Header("Camera Settings")]
+    [SerializeField] private Transform followTransform; // Объект, за которым следует камера
+    [SerializeField] private float rotationPower = 3f; // Чувствительность мыши
+    [SerializeField] private float minVerticalAngle = 40f; // Минимальный угол камеры (вниз)
+    [SerializeField] private float maxVerticalAngle = 340f; // Максимальный угол камеры (вверх)
     #endregion
 
     #region Components
@@ -42,6 +51,11 @@ public class PlayerMovement : MonoBehaviour
             Debug.LogWarning("Ты еблан? Где аниматор?");
         }
 
+        if (followTransform == null)
+        {
+            Debug.LogWarning("Follow Transform не назначен! Создай пустой объект как child игрока.");
+        }
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -61,6 +75,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         HandleGroundCheck();
+        HandleCameraRotation();
         HandleMovement();
         HandleGravity();
         UpdateAnimations();
@@ -83,35 +98,77 @@ public class PlayerMovement : MonoBehaviour
     }
     #endregion
 
+    #region Camera Rotation
+    private void HandleCameraRotation()
+    {
+        if (followTransform == null) return;
+
+        // Горизонтальное вращение (вокруг оси Y) - вращаем ИГРОКА
+        float mouseX = Input.GetAxis("Mouse X");
+        transform.rotation *= Quaternion.AngleAxis(mouseX * rotationPower, Vector3.up);
+
+        // Вертикальное вращение (вокруг оси X) - вращаем только followTransform
+        float mouseY = Input.GetAxis("Mouse Y");
+        followTransform.rotation *= Quaternion.AngleAxis(mouseY * rotationPower, Vector3.right);
+
+        // Получаем текущие углы
+        var angles = followTransform.localEulerAngles;
+        angles.z = 0; // Убираем вращение по Z
+
+        var angle = followTransform.localEulerAngles.x;
+
+        // Ограничиваем вертикальное вращение
+        if (angle > 180f && angle < maxVerticalAngle)
+        {
+            angles.x = maxVerticalAngle;
+        }
+        else if (angle < 180f && angle > minVerticalAngle)
+        {
+            angles.x = minVerticalAngle;
+        }
+
+        // Применяем только X вращение, Y и Z обнуляем
+        followTransform.localEulerAngles = new Vector3(angles.x, 0, 0);
+    }
+    #endregion
+
     #region Movement
     private void HandleMovement()
     {
         float horizontal = Input.GetAxisRaw("Horizontal"); // A/D
         float vertical = Input.GetAxisRaw("Vertical");     // W/S
 
-        Vector3 cameraForward = Camera.main.transform.forward;
-        Vector3 cameraRight = Camera.main.transform.right;
+        // Берём направление от самого игрока (он уже поворачивается мышью)
+        Vector3 playerForward = transform.forward;
+        Vector3 playerRight = transform.right;
 
-        cameraForward.y = 0;
-        cameraRight.y = 0;
-        cameraForward.Normalize();
-        cameraRight.Normalize();
+        playerForward.y = 0;
+        playerRight.y = 0;
+        playerForward.Normalize();
+        playerRight.Normalize();
 
-        Vector3 desiredMoveDirection = cameraForward * vertical + cameraRight * horizontal;
+        // Движение относительно направления игрока
+        Vector3 desiredMoveDirection = playerForward * vertical + playerRight * horizontal;
 
         bool isSprinting = Input.GetKey(KeyCode.LeftShift);
         float currentSpeed = isSprinting ? sprintSpeed : walkSpeed;
 
         Vector3 targetMovement = desiredMoveDirection.normalized * currentSpeed;
-        currentMovement = Vector3.Lerp(currentMovement, targetMovement, acceleration * Time.deltaTime);
 
-        controller.Move(currentMovement * Time.deltaTime);
-
+        float lerpSpeed;
         if (desiredMoveDirection.magnitude > 0.1f)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(desiredMoveDirection);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            lerpSpeed = acceleration;  // Разгон
         }
+        else
+        {
+            lerpSpeed = deceleration;  // Торможение
+        }
+
+        currentMovement = Vector3.Lerp(currentMovement, targetMovement, lerpSpeed * Time.deltaTime);
+        controller.Move(currentMovement * Time.deltaTime);
+
+        // УБРАЛИ АВТОМАТИЧЕСКИЙ ПОВОРОТ - игрок поворачивается только мышью
     }
     #endregion
 
