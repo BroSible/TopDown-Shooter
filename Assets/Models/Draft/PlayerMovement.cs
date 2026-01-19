@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float sprintSpeed = 8f;
     [SerializeField] private float rotationSpeed = 10f;
     [SerializeField] private float acceleration = 10f;
+    [SerializeField] private float deceleration = 20f; 
     #endregion
 
     #region Gravity Settings
@@ -103,8 +104,18 @@ public class PlayerMovement : MonoBehaviour
         float currentSpeed = isSprinting ? sprintSpeed : walkSpeed;
 
         Vector3 targetMovement = desiredMoveDirection.normalized * currentSpeed;
-        currentMovement = Vector3.Lerp(currentMovement, targetMovement, acceleration * Time.deltaTime);
 
+        float lerpSpeed;
+        if (desiredMoveDirection.magnitude > 0.1f)
+        {
+            lerpSpeed = acceleration;  // Разгон
+        }
+        else
+        {
+            lerpSpeed = deceleration;  // Торможение
+        }
+
+        currentMovement = Vector3.Lerp(currentMovement, targetMovement, lerpSpeed * Time.deltaTime);
         controller.Move(currentMovement * Time.deltaTime);
 
         if (desiredMoveDirection.magnitude > 0.1f)
