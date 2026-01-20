@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.VFX;
+using Cinemachine;
 
 public class BaseWeapon : MonoBehaviour
 {
@@ -28,11 +29,11 @@ public class BaseWeapon : MonoBehaviour
     public AudioClip ShootGun;
     public AudioClip reloadingGun;
     
-    [Header("Camera & ADS")]
-    public Camera playerCamera;
+    [Header("Cinemachine Cameras")]
+    public CinemachineVirtualCamera normalCamera;      // Обычная виртуальная камера
+    public CinemachineVirtualCamera aimCamera;         // Виртуальная камера для прицеливания
+    public GameObject aimReticle;                      // Прицельная сетка при ADS
     public bool isAiming = false;
-    public float aimFOV = 40f;
-    public float normalFOV = 60f;
     public float aimSpeed = 10f;
     
     [Header("Weapon Attachment")]
@@ -53,6 +54,10 @@ public class BaseWeapon : MonoBehaviour
     
     protected KeyCode reloadKey = KeyCode.R;
     protected float timeSinceLastShot = 0f;
+    
+    // Приоритеты камер
+    private int normalCameraPriority = 10;
+    private int aimCameraPriority = 11;
     
     public bool IsReloading
     {
@@ -114,9 +119,21 @@ public class BaseWeapon : MonoBehaviour
             maxAmmo = int.MaxValue;
         }
         
-        if (playerCamera != null)
+        // Настраиваем приоритеты камер
+        if (normalCamera != null)
         {
-            normalFOV = playerCamera.fieldOfView;
+            normalCamera.Priority = normalCameraPriority;
+        }
+        
+        if (aimCamera != null)
+        {
+            aimCamera.Priority = 0; // Изначально выключена
+        }
+        
+        // Изначально отключаем прицельную сетку
+        if (aimReticle != null)
+        {
+            aimReticle.SetActive(false);
         }
     }
 
@@ -236,19 +253,56 @@ public class BaseWeapon : MonoBehaviour
 
     protected virtual void HandleAiming()
     {
-        if (playerCamera == null) return;
+        if (normalCamera == null || aimCamera == null) return;
 
+        // Проверяем нажатие кнопки прицеливания (правая кнопка мыши)
         if (Input.GetButton("Fire2") && !isReloading)
         {
-            isAiming = true;
+            // Включаем режим прицеливания
+            if (!isAiming)
+            {
+                isAiming = true;
+                
+                // Переключаем приоритет камер - aimCamera становится активной
+                normalCamera.Priority = 0;
+                aimCamera.Priority = aimCameraPriority;
+                
+                // Показываем прицельную сетку с задержкой для плавности
+                if (aimReticle != null)
+                {
+                    StartCoroutine(ShowReticle());
+                }
+                
+                Debug.Log("[BaseWeapon] Режим прицеливания включен");
+            }
         }
-        else
+        else if (isAiming)
         {
+            // Выключаем режим прицеливания
             isAiming = false;
+            
+            // Возвращаем приоритет обычной камере
+            normalCamera.Priority = normalCameraPriority;
+            aimCamera.Priority = 0;
+            
+            if (aimReticle != null)
+            {
+                aimReticle.SetActive(false);
+            }
+            
+            Debug.Log("[BaseWeapon] Режим прицеливания выключен");
         }
+    }
 
-        float targetFOV = isAiming ? aimFOV : normalFOV;
-        playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, targetFOV, aimSpeed * Time.deltaTime);
+    protected virtual IEnumerator ShowReticle()
+    {
+        // Небольшая задержка для плавности переключения камеры
+        yield return new WaitForSeconds(0.1f);
+        
+        if (aimReticle != null && isAiming)
+        {
+            aimReticle.SetActive(true);
+        }
     }
 
     protected virtual void Shoot()
@@ -281,12 +335,15 @@ public class BaseWeapon : MonoBehaviour
 
     protected virtual Vector3 GetShootDirection()
     {
-        if (playerCamera == null)
+        // Находим активную Main Camera через Camera.main
+        Camera mainCam = Camera.main;
+        
+        if (mainCam == null)
         {
             return shotPoint.transform.forward.normalized;
         }
 
-        Ray ray = playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        Ray ray = mainCam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         RaycastHit hit;
 
         Vector3 targetPoint;
