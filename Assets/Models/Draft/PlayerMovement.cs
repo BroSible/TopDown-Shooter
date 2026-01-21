@@ -20,10 +20,16 @@ public class PlayerMovement : MonoBehaviour
 
     #region Camera Settings
     [Header("Camera Settings")]
-    [SerializeField] private Transform followTransform; // Объект, за которым следует камера
-    [SerializeField] private float rotationPower = 3f; // Чувствительность мыши
-    [SerializeField] private float minVerticalAngle = 40f; // Минимальный угол камеры (вниз)
-    [SerializeField] private float maxVerticalAngle = 340f; // Максимальный угол камеры (вверх)
+    [SerializeField] private Transform followTransform;
+    [SerializeField] private float rotationPower = 3f;
+    [SerializeField] private float minVerticalAngle = 40f;
+    [SerializeField] private float maxVerticalAngle = 340f;
+    #endregion
+
+    #region Control Lock
+    [Header("Control Lock")]
+    public bool isControlLocked = false;
+    public bool lockCameraRotation = true;
     #endregion
 
     #region Components
@@ -34,21 +40,20 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 currentMovement;
     #endregion
 
-    #region Unity Lifecycle
     void Start()
     {
         controller = GetComponent<CharacterController>();
         
         if (controller == null)
         {
-            Debug.LogError("Контроллер не найден долбоёб добавь его" + gameObject.name);
+            Debug.LogError("Контроллер не найден, добавь его на " + gameObject.name);
         }
 
         animator = GetComponentInChildren<Animator>();
         
         if (animator == null)
         {
-            Debug.LogWarning("Ты еблан? Где аниматор?");
+            Debug.LogWarning("Аниматор не найден на " + gameObject.name);
         }
 
         if (followTransform == null)
@@ -75,14 +80,20 @@ public class PlayerMovement : MonoBehaviour
         }
 
         HandleGroundCheck();
-        HandleCameraRotation();
-        HandleMovement();
         HandleGravity();
-        UpdateAnimations();
-    }
-    #endregion
 
-    #region Ground Check
+        if (!isControlLocked)
+        {
+            HandleCameraRotation();
+            HandleMovement();
+            UpdateAnimations();
+        }
+        else
+        {
+            StopMovement();
+        }
+    }
+
     private void HandleGroundCheck()
     {
         isGrounded = Physics.CheckSphere(
@@ -96,9 +107,7 @@ public class PlayerMovement : MonoBehaviour
             velocity.y = -2f; 
         }
     }
-    #endregion
 
-    #region Camera Rotation
     private void HandleCameraRotation()
     {
         if (followTransform == null) return;
@@ -125,13 +134,11 @@ public class PlayerMovement : MonoBehaviour
 
         followTransform.localEulerAngles = new Vector3(angles.x, 0, 0);
     }
-    #endregion
 
-    #region Movement
     private void HandleMovement()
     {
-        float horizontal = Input.GetAxisRaw("Horizontal"); // A/D
-        float vertical = Input.GetAxisRaw("Vertical");     // W/S
+        float horizontal = Input.GetAxisRaw("Horizontal");
+        float vertical = Input.GetAxisRaw("Vertical");
 
         Vector3 playerForward = transform.forward;
         Vector3 playerRight = transform.right;
@@ -148,23 +155,38 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 targetMovement = desiredMoveDirection.normalized * currentSpeed;
 
-        float lerpSpeed;
-        if (desiredMoveDirection.magnitude > 0.1f)
-        {
-            lerpSpeed = acceleration;  
-        }
-        else
-        {
-            lerpSpeed = deceleration;  
-        }
+        float lerpSpeed = desiredMoveDirection.magnitude > 0.1f ? acceleration : deceleration;
 
         currentMovement = Vector3.Lerp(currentMovement, targetMovement, lerpSpeed * Time.deltaTime);
         controller.Move(currentMovement * Time.deltaTime);
-
     }
-    #endregion
 
-    #region Gravity
+    private void StopMovement()
+    {
+        currentMovement = Vector3.Lerp(currentMovement, Vector3.zero, deceleration * Time.deltaTime);
+        controller.Move(currentMovement * Time.deltaTime);
+
+        // ИСПРАВЛЕНО: Безопасное обновление анимаций
+        if (animator != null)
+        {
+            // Проверяем существование каждого параметра перед установкой
+            if (HasParameter(animator, "Speed"))
+                animator.SetFloat("Speed", 0f);
+            
+            if (HasParameter(animator, "IsMoving"))
+                animator.SetBool("IsMoving", false);
+            
+            if (HasParameter(animator, "IsSprinting"))
+                animator.SetBool("IsSprinting", false);
+            
+            if (HasParameter(animator, "Horizontal"))
+                animator.SetFloat("Horizontal", 0f);
+            
+            if (HasParameter(animator, "Vertical"))
+                animator.SetFloat("Vertical", 0f);
+        }
+    }
+
     private void HandleGravity()
     {
         if (!isGrounded)
@@ -174,45 +196,80 @@ public class PlayerMovement : MonoBehaviour
 
         controller.Move(velocity * Time.deltaTime);
     }
-    #endregion
 
-    #region Animation Updates
-   private void UpdateAnimations()
-{
-    if (animator == null) return;
-
-    Vector3 moveDirection = currentMovement;
-    moveDirection.y = 0;
-    float speed = moveDirection.magnitude;
-
-    bool isMoving = speed > 0.1f;
-    bool isSprinting = Input.GetKey(KeyCode.LeftShift) && isMoving;
-
-    animator.SetBool("IsMoving", isMoving);
-    animator.SetBool("IsSprinting", isSprinting);
-    
-    if (isSprinting)
+    private void UpdateAnimations()
     {
-        animator.SetFloat("Speed", 2f); 
-    }
-    else if (isMoving)
-    {
-        animator.SetFloat("Speed", 1f); 
-    }
-    else
-    {
-        animator.SetFloat("Speed", 0f); 
-    }
-    
-    float horizontal = Input.GetAxisRaw("Horizontal");
-    float vertical = Input.GetAxisRaw("Vertical");
-    
-    animator.SetFloat("Horizontal", horizontal);
-    animator.SetFloat("Vertical", vertical);
-}
-    #endregion
+        if (animator == null) return;
 
-    #region Debug
+        Vector3 moveDirection = currentMovement;
+        moveDirection.y = 0;
+        float speed = moveDirection.magnitude;
+
+        bool isMoving = speed > 0.1f;
+        bool isSprinting = Input.GetKey(KeyCode.LeftShift) && isMoving;
+
+        // ИСПРАВЛЕНО: Безопасная установка параметров
+        if (HasParameter(animator, "IsMoving"))
+            animator.SetBool("IsMoving", isMoving);
+        
+        if (HasParameter(animator, "IsSprinting"))
+            animator.SetBool("IsSprinting", isSprinting);
+        
+        if (HasParameter(animator, "Speed"))
+        {
+            if (isSprinting)
+                animator.SetFloat("Speed", 2f); 
+            else if (isMoving)
+                animator.SetFloat("Speed", 1f); 
+            else
+                animator.SetFloat("Speed", 0f);
+        }
+        
+        float horizontal = Input.GetAxisRaw("Horizontal");
+        float vertical = Input.GetAxisRaw("Vertical");
+        
+        if (HasParameter(animator, "Horizontal"))
+            animator.SetFloat("Horizontal", horizontal);
+        
+        if (HasParameter(animator, "Vertical"))
+            animator.SetFloat("Vertical", vertical);
+    }
+
+    // НОВЫЙ МЕТОД: Проверка существования параметра в Animator
+    private bool HasParameter(Animator anim, string paramName)
+    {
+        foreach (AnimatorControllerParameter param in anim.parameters)
+        {
+            if (param.name == paramName)
+                return true;
+        }
+        return false;
+    }
+
+    public void LockControls(bool lockCamera = true)
+    {
+        isControlLocked = true;
+        lockCameraRotation = lockCamera;
+        Debug.Log("Управление игроком заблокировано");
+    }
+
+    public void UnlockControls()
+    {
+        isControlLocked = false;
+        Debug.Log("Управление игроком разблокировано");
+    }
+
+    public bool IsControlLocked()
+    {
+        return isControlLocked;
+    }
+
+    public void ForceStop()
+    {
+        currentMovement = Vector3.zero;
+        velocity.y = -2f;
+    }
+
     private void OnDrawGizmosSelected()
     {
         if (controller != null)
@@ -224,5 +281,4 @@ public class PlayerMovement : MonoBehaviour
             );
         }
     }
-    #endregion
 }

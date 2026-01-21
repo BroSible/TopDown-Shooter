@@ -23,7 +23,10 @@ public class WeaponManager : MonoBehaviour
     public float bonusGunDuration = 20f;
 
     [Header("Player Animator")]
-    public Animator playerAnimator; // Аниматор персонажа
+    public Animator playerAnimator; 
+
+    [Header("Artillery Reference")]
+    public ArtilleryStrike artilleryStrike;
     
     private bool isReloading;
     private bool isShooting;
@@ -67,6 +70,11 @@ public class WeaponManager : MonoBehaviour
                 currentWeapon.IsReloading = false;
             }
         }
+
+        if (artilleryStrike != null && !artilleryStrike.CanUseWeapons())
+    {
+        return; // Блокируем стрельбу во время артудара
+    }
 
         CheckStatus();
         CheckBonusGun();
