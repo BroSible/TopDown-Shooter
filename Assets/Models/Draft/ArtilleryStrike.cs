@@ -31,10 +31,10 @@ public class ArtilleryStrike : MonoBehaviour
     
     public enum AnimationType
     {
-        Lerp,           // Линейная
-        Smoothstep,     // Плавная S-кривая
-        EaseInOut,      // Ease in-out
-        EaseOut         // Только ease out
+        Lerp,           
+        Smoothstep,     
+        EaseInOut,      
+        EaseOut         
     }
     
     [Header("Map Icons")]
@@ -82,7 +82,6 @@ public class ArtilleryStrike : MonoBehaviour
     public bool showDebugInfo = true;
     public bool drawGizmos = true;
     
-    // Public state variables (for UI access)
     public bool isSelectingTarget { get; private set; } = false;
     public bool isStrikeInProgress { get; private set; } = false;
     private Vector3 selectedWorldPosition;
@@ -105,7 +104,6 @@ public class ArtilleryStrike : MonoBehaviour
             Debug.LogWarning("[Artillery] Player Transform не назначен, использую transform скрипта");
         }
         
-        // Настраиваем минимап камеру
         SetupMinimapCamera();
         
         if (artilleryCanvas != null)
@@ -132,7 +130,6 @@ public class ArtilleryStrike : MonoBehaviour
 
     void SetupMinimapCamera()
     {
-        // Если камера не назначена, ищем камеру с тегом "MinimapCamera"
         if (minimapCamera == null)
         {
             GameObject minimapCamObj = GameObject.FindGameObjectWithTag("MinimapCamera");
@@ -142,7 +139,6 @@ public class ArtilleryStrike : MonoBehaviour
             }
         }
         
-        // Если всё ещё null, создаём новую камеру
         if (minimapCamera == null)
         {
             GameObject camObj = new GameObject("Minimap Camera");
@@ -165,18 +161,15 @@ public class ArtilleryStrike : MonoBehaviour
             minimapCamera.gameObject.tag = "MinimapCamera";
         }
         
-        // Создаем RenderTexture если не назначен
         if (minimapRenderTexture == null)
         {
             minimapRenderTexture = new RenderTexture(512, 512, 16);
             minimapRenderTexture.name = "MinimapRT";
         }
         
-        // Назначаем RenderTexture на камеру
         minimapCamera.targetTexture = minimapRenderTexture;
-        minimapCamera.enabled = false; // Отключаем по умолчанию
+        minimapCamera.enabled = false; 
         
-        // Назначаем RenderTexture на display
         if (minimapDisplay != null)
         {
             minimapDisplay.texture = minimapRenderTexture;
@@ -246,13 +239,11 @@ public class ArtilleryStrike : MonoBehaviour
             artilleryCanvas.gameObject.SetActive(true);
         }
         
-        // Включаем минимап камеру
         if (minimapCamera != null)
         {
             minimapCamera.enabled = true;
         }
         
-        // Анимируем открытие минимапы
         if (animationCoroutine != null)
         {
             StopCoroutine(animationCoroutine);
@@ -307,7 +298,6 @@ public class ArtilleryStrike : MonoBehaviour
             elapsed += Time.deltaTime;
             float t = elapsed / duration;
             
-            // Применяем выбранный тип интерполяции
             float interpolatedT = GetInterpolation(t, animationType);
             
             minimapPanel.sizeDelta = Vector2.Lerp(startSize, targetSize, interpolatedT);
@@ -351,7 +341,6 @@ public class ArtilleryStrike : MonoBehaviour
             return;
         }
         
-        // Получаем позицию мыши относительно минимапы
         Vector2 localPoint;
         bool isInsideMinimap = RectTransformUtility.ScreenPointToLocalPointInRectangle(
             minimapPanel, 
@@ -365,11 +354,9 @@ public class ArtilleryStrike : MonoBehaviour
             Debug.Log($"[Artillery] Mouse screen pos: {Input.mousePosition}, Local point: {localPoint}");
         }
         
-        // Проверяем, что курсор внутри минимапы
         Rect rect = minimapPanel.rect;
         bool cursorInBounds = rect.Contains(localPoint);
         
-        // Ограничиваем курсор в пределах минимапы
         Vector2 clampedPoint = new Vector2(
             Mathf.Clamp(localPoint.x, rect.xMin, rect.xMax),
             Mathf.Clamp(localPoint.y, rect.yMin, rect.yMax)
@@ -379,13 +366,11 @@ public class ArtilleryStrike : MonoBehaviour
         {
             targetCursor.rectTransform.anchoredPosition = clampedPoint;
             
-            // Визуально показываем, что курсор в пределах
             Color cursorColor = targetCursor.color;
             cursorColor.a = cursorInBounds ? 1f : 0.5f;
             targetCursor.color = cursorColor;
         }
         
-        // Конвертируем UI координаты в мировые
         selectedWorldPosition = MinimapToWorldPosition(clampedPoint);
         
         if (showDebugInfo)
@@ -405,11 +390,9 @@ public class ArtilleryStrike : MonoBehaviour
         
         Rect rect = minimapPanel.rect;
         
-        // Нормализуем координаты минимапы (0 до 1)
         float normalizedX = (minimapPosition.x - rect.xMin) / rect.width;
         float normalizedY = (minimapPosition.y - rect.yMin) / rect.height;
         
-        // ВАЖНО: Инвертируем Y, так как UI координаты идут сверху вниз
         normalizedY = 1f - normalizedY;
         
         if (showDebugInfo)
@@ -417,11 +400,9 @@ public class ArtilleryStrike : MonoBehaviour
             Debug.Log($"[Artillery] Minimap pos: {minimapPosition}, Normalized: ({normalizedX}, {normalizedY})");
         }
         
-        // Используем минимап камеру для raycast
         Ray ray = minimapCamera.ViewportPointToRay(new Vector3(normalizedX, normalizedY, 0));
         RaycastHit hit;
         
-        // Рисуем луч в режиме отладки
         if (showDebugInfo)
         {
             Debug.DrawRay(ray.origin, ray.direction * 1000f, Color.yellow, 2f);
@@ -436,20 +417,17 @@ public class ArtilleryStrike : MonoBehaviour
             return hit.point;
         }
         
-        // Fallback: вычисляем позицию вручную на основе ортографической камеры
         float orthoWidth = minimapCamera.orthographicSize * minimapCamera.aspect;
         float orthoHeight = minimapCamera.orthographicSize;
         
         Vector3 cameraPos = minimapCamera.transform.position;
         
-        // Учитываем поворот камеры (90 градусов вниз)
-        // X и Z зависят от того, как камера смотрит
+
         float worldX = cameraPos.x + (normalizedX - 0.5f) * 2f * orthoWidth;
         float worldZ = cameraPos.z - (normalizedY - 0.5f) * 2f * orthoHeight;
         
         Vector3 fallbackPos = new Vector3(worldX, 0f, worldZ);
         
-        // Пытаемся найти точную высоту земли
         if (Physics.Raycast(new Vector3(worldX, 1000f, worldZ), Vector3.down, out hit, 2000f))
         {
             fallbackPos.y = hit.point.y;
@@ -510,7 +488,6 @@ public class ArtilleryStrike : MonoBehaviour
         if (iconUpdateTimer < iconUpdateInterval) return;
         iconUpdateTimer = 0f;
         
-        // Обновляем позицию иконки игрока
         if (playerIcon != null && playerTransform != null)
         {
             Vector2 iconPos = WorldToMinimapPosition(playerTransform.position);
@@ -521,20 +498,17 @@ public class ArtilleryStrike : MonoBehaviour
             }
         }
         
-        // Обновляем иконки врагов
         UpdateEnemyIcons();
     }
 
     void UpdateEnemyIcons()
     {
-        // Удаляем старые иконки
         foreach (GameObject icon in enemyIcons)
         {
             if (icon != null) Destroy(icon);
         }
         enemyIcons.Clear();
         
-        // Находим всех врагов
         BaseEnemy[] allEnemies = FindObjectsOfType<BaseEnemy>();
         
         foreach (BaseEnemy enemy in allEnemies)
@@ -545,7 +519,6 @@ public class ArtilleryStrike : MonoBehaviour
             
             Rect rect = minimapPanel.rect;
             
-            // Проверяем что враг в пределах минимапы
             if (rect.Contains(iconPos))
             {
                 GameObject enemyIcon = null;
@@ -579,12 +552,10 @@ public class ArtilleryStrike : MonoBehaviour
     {
         if (minimapCamera == null || minimapPanel == null) return Vector2.zero;
         
-        // Конвертируем мировую позицию в viewport координаты минимап камеры
         Vector3 viewportPos = minimapCamera.WorldToViewportPoint(worldPosition);
         
         Rect rect = minimapPanel.rect;
         
-        // Конвертируем viewport (0-1) в координаты минимапы
         Vector2 minimapPos = new Vector2(
             rect.xMin + viewportPos.x * rect.width,
             rect.yMin + viewportPos.y * rect.height
@@ -610,7 +581,6 @@ public class ArtilleryStrike : MonoBehaviour
 
     void ConfirmStrike()
     {
-        // ВАЖНО: Обновляем позицию ПЕРЕД подтверждением
         if (minimapPanel != null && minimapCamera != null)
         {
             Vector2 localPoint;
@@ -636,7 +606,7 @@ public class ArtilleryStrike : MonoBehaviour
         if (showDebugInfo)
         {
             Debug.Log($"[Artillery] ========== УДАР ПОДТВЕРЖДЁН ==========");
-            Debug.Log($"[Artillery] ★★★ ФИНАЛЬНАЯ целевая позиция: {selectedWorldPosition} ★★★");
+            Debug.Log($"[Artillery] ФИНАЛЬНАЯ целевая позиция: {selectedWorldPosition} ★★★");
             Debug.Log($"[Artillery] Оставшиеся удары: {availableStrikes}");
         }
         
@@ -645,7 +615,6 @@ public class ArtilleryStrike : MonoBehaviour
             audioSource.PlayOneShot(confirmSound);
         }
         
-        // Анимируем закрытие минимапы
         if (animationCoroutine != null)
         {
             StopCoroutine(animationCoroutine);
@@ -664,7 +633,7 @@ public class ArtilleryStrike : MonoBehaviour
         
         ClearMapIcons();
         
-        // Отключаем минимап камеру
+
         if (minimapCamera != null)
         {
             minimapCamera.enabled = false;
@@ -789,7 +758,6 @@ public class ArtilleryStrike : MonoBehaviour
             audioSource.PlayOneShot(bombWhistleSound);
         }
         
-        // Прямое падение на цель
         float fallDistance = dropPosition.y - targetPosition.y;
         float fallTime = fallDistance / bombFallSpeed;
         float elapsed = 0f;
