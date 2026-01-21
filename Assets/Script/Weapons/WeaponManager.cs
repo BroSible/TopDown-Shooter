@@ -21,11 +21,15 @@ public class WeaponManager : MonoBehaviour
     
     [Header("Bonus Weapon Settings")]
     public float bonusGunDuration = 20f;
+
+    [Header("Player Animator")]
+    public Animator playerAnimator; // Аниматор персонажа
     
     private bool isReloading;
     private bool isShooting;
     private BaseWeapon currentWeapon;
 
+    // Обновляем метод Start()
     private void Start()
     {
         for (int i = 1; i < _weapons.Length; i++)
@@ -34,6 +38,7 @@ public class WeaponManager : MonoBehaviour
         }
         
         AssignCamerasToWeapons();
+        AssignAnimatorToWeapons(); 
         
         UpdateWeaponIcon();
     }
@@ -65,6 +70,43 @@ public class WeaponManager : MonoBehaviour
 
         CheckStatus();
         CheckBonusGun();
+    }
+    
+    private void AssignAnimatorToWeapons()
+    {
+        if (playerAnimator == null)
+        {
+            playerAnimator = GetComponentInParent<Animator>();
+            
+            if (playerAnimator == null)
+            {
+                Debug.LogWarning("Player Animator не назначен и не найден автоматически!");
+                return;
+            }
+        }
+
+        foreach (GameObject weapon in _weapons)
+        {
+            if (weapon != null)
+            {
+                BaseWeapon baseWeapon = weapon.GetComponentInChildren<BaseWeapon>();
+                if (baseWeapon != null)
+                {
+                    baseWeapon.playerAnimator = playerAnimator;
+                }
+            }
+        }
+
+        if (_bonusGun != null)
+        {
+            BaseWeapon bonusWeapon = _bonusGun.GetComponentInChildren<BaseWeapon>();
+            if (bonusWeapon != null)
+            {
+                bonusWeapon.playerAnimator = playerAnimator;
+            }
+        }
+
+        Debug.Log("Аниматор назначен всем оружиям!");
     }
 
     private void AssignCamerasToWeapons()

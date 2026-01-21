@@ -51,6 +51,11 @@ public class BaseWeapon : MonoBehaviour
     [Header("Status")]
     public bool isShooting;
     public bool isReloading;
+
+    [Header("Animation")]
+    public Animator playerAnimator; // Аниматор персонажа
+    public string aimBoolParameter = "IsAiming"; // Параметр для прицеливания
+    public string shootTriggerParameter = "Shoot"; // Триггер для выстрела
     
     protected KeyCode reloadKey = KeyCode.R;
     protected float timeSinceLastShot = 0f;
@@ -251,52 +256,56 @@ public class BaseWeapon : MonoBehaviour
         }
     }
 
-    protected virtual void HandleAiming()
-    {
-        if (normalCamera == null || aimCamera == null) return;
+   protected virtual void HandleAiming()
+{
+    if (normalCamera == null || aimCamera == null) return;
 
-        // Проверяем нажатие кнопки прицеливания (правая кнопка мыши)
-        if (Input.GetButton("Fire2") && !isReloading)
+    if (Input.GetButton("Fire2") && !isReloading)
+    {
+        if (!isAiming)
         {
-            // Включаем режим прицеливания
-            if (!isAiming)
-            {
-                isAiming = true;
-                
-                // Переключаем приоритет камер - aimCamera становится активной
-                normalCamera.Priority = 0;
-                aimCamera.Priority = aimCameraPriority;
-                
-                // Показываем прицельную сетку с задержкой для плавности
-                if (aimReticle != null)
-                {
-                    StartCoroutine(ShowReticle());
-                }
-                
-                Debug.Log("[BaseWeapon] Режим прицеливания включен");
-            }
-        }
-        else if (isAiming)
-        {
-            // Выключаем режим прицеливания
-            isAiming = false;
+            isAiming = true;
             
-            // Возвращаем приоритет обычной камере
-            normalCamera.Priority = normalCameraPriority;
-            aimCamera.Priority = 0;
+            normalCamera.Priority = 0;
+            aimCamera.Priority = aimCameraPriority;
+            
+            // ДОБАВЛЕНО: Включаем анимацию прицеливания
+            if (playerAnimator != null)
+            {
+                playerAnimator.SetBool(aimBoolParameter, true);
+            }
             
             if (aimReticle != null)
             {
-                aimReticle.SetActive(false);
+                StartCoroutine(ShowReticle());
             }
             
-            Debug.Log("[BaseWeapon] Режим прицеливания выключен");
+            Debug.Log("[BaseWeapon] Режим прицеливания включен");
         }
     }
+    else if (isAiming)
+    {
+        isAiming = false;
+        
+        normalCamera.Priority = normalCameraPriority;
+        aimCamera.Priority = 0;
+        
+        if (playerAnimator != null)
+        {
+            playerAnimator.SetBool(aimBoolParameter, false);
+        }
+        
+        if (aimReticle != null)
+        {
+            aimReticle.SetActive(false);
+        }
+        
+        Debug.Log("[BaseWeapon] Режим прицеливания выключен");
+    }
+}
 
     protected virtual IEnumerator ShowReticle()
     {
-        // Небольшая задержка для плавности переключения камеры
         yield return new WaitForSeconds(0.1f);
         
         if (aimReticle != null && isAiming)
@@ -305,37 +314,41 @@ public class BaseWeapon : MonoBehaviour
         }
     }
 
-    protected virtual void Shoot()
+   protected virtual void Shoot()
+{
+    audiogun.PlayOneShot(ShootGun);
+    
+    if (muzzleFlash != null)
     {
-        audiogun.PlayOneShot(ShootGun);
-        
-        if (muzzleFlash != null)
-        {
-            muzzleFlash.Play();
-        }
-
-        Vector3 direction = GetShootDirection();
-        
-        GameObject _bullet = Instantiate(bullet, shotPoint.position, Quaternion.LookRotation(direction) * Quaternion.Euler(90, 0, 0));
-        _bullet.SetActive(true);
-
-        Rigidbody bulletRb = _bullet.GetComponent<Rigidbody>();
-        if (bulletRb != null)
-        {
-            bulletRb.velocity = direction * bulletSpeed;
-        }
-        
-        Destroy(_bullet, 5f);
-
-        timeSinceLastShot = 0f;
-        magazineSize--;
-        
-        Debug.Log($"Оставшиеся патроны в магазине: {magazineSize}");
+        muzzleFlash.Play();
     }
+    
+    if (playerAnimator != null)
+    {
+        playerAnimator.SetTrigger(shootTriggerParameter);
+    }
+
+    Vector3 direction = GetShootDirection();
+    
+    GameObject _bullet = Instantiate(bullet, shotPoint.position, Quaternion.LookRotation(direction) * Quaternion.Euler(90, 0, 0));
+    _bullet.SetActive(true);
+
+    Rigidbody bulletRb = _bullet.GetComponent<Rigidbody>();
+    if (bulletRb != null)
+    {
+        bulletRb.velocity = direction * bulletSpeed;
+    }
+    
+    Destroy(_bullet, 5f);
+
+    timeSinceLastShot = 0f;
+    magazineSize--;
+    
+    Debug.Log($"Оставшиеся патроны в магазине: {magazineSize}");
+}
 
     protected virtual Vector3 GetShootDirection()
     {
-        // Находим активную Main Camera через Camera.main
         Camera mainCam = Camera.main;
         
         if (mainCam == null)

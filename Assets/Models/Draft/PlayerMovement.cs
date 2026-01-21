@@ -103,21 +103,17 @@ public class PlayerMovement : MonoBehaviour
     {
         if (followTransform == null) return;
 
-        // Горизонтальное вращение (вокруг оси Y) - вращаем ИГРОКА
         float mouseX = Input.GetAxis("Mouse X");
         transform.rotation *= Quaternion.AngleAxis(mouseX * rotationPower, Vector3.up);
 
-        // Вертикальное вращение (вокруг оси X) - вращаем только followTransform
         float mouseY = Input.GetAxis("Mouse Y");
         followTransform.rotation *= Quaternion.AngleAxis(mouseY * rotationPower, Vector3.right);
 
-        // Получаем текущие углы
         var angles = followTransform.localEulerAngles;
-        angles.z = 0; // Убираем вращение по Z
+        angles.z = 0; 
 
         var angle = followTransform.localEulerAngles.x;
 
-        // Ограничиваем вертикальное вращение
         if (angle > 180f && angle < maxVerticalAngle)
         {
             angles.x = maxVerticalAngle;
@@ -127,7 +123,6 @@ public class PlayerMovement : MonoBehaviour
             angles.x = minVerticalAngle;
         }
 
-        // Применяем только X вращение, Y и Z обнуляем
         followTransform.localEulerAngles = new Vector3(angles.x, 0, 0);
     }
     #endregion
@@ -138,7 +133,6 @@ public class PlayerMovement : MonoBehaviour
         float horizontal = Input.GetAxisRaw("Horizontal"); // A/D
         float vertical = Input.GetAxisRaw("Vertical");     // W/S
 
-        // Берём направление от самого игрока (он уже поворачивается мышью)
         Vector3 playerForward = transform.forward;
         Vector3 playerRight = transform.right;
 
@@ -147,7 +141,6 @@ public class PlayerMovement : MonoBehaviour
         playerForward.Normalize();
         playerRight.Normalize();
 
-        // Движение относительно направления игрока
         Vector3 desiredMoveDirection = playerForward * vertical + playerRight * horizontal;
 
         bool isSprinting = Input.GetKey(KeyCode.LeftShift);
@@ -158,17 +151,16 @@ public class PlayerMovement : MonoBehaviour
         float lerpSpeed;
         if (desiredMoveDirection.magnitude > 0.1f)
         {
-            lerpSpeed = acceleration;  // Разгон
+            lerpSpeed = acceleration;  
         }
         else
         {
-            lerpSpeed = deceleration;  // Торможение
+            lerpSpeed = deceleration;  
         }
 
         currentMovement = Vector3.Lerp(currentMovement, targetMovement, lerpSpeed * Time.deltaTime);
         controller.Move(currentMovement * Time.deltaTime);
 
-        // УБРАЛИ АВТОМАТИЧЕСКИЙ ПОВОРОТ - игрок поворачивается только мышью
     }
     #endregion
 
@@ -185,27 +177,39 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
     #region Animation Updates
-    private void UpdateAnimations()
+   private void UpdateAnimations()
+{
+    if (animator == null) return;
+
+    Vector3 moveDirection = currentMovement;
+    moveDirection.y = 0;
+    float speed = moveDirection.magnitude;
+
+    bool isMoving = speed > 0.1f;
+    bool isSprinting = Input.GetKey(KeyCode.LeftShift) && isMoving;
+
+    animator.SetBool("IsMoving", isMoving);
+    animator.SetBool("IsSprinting", isSprinting);
+    
+    if (isSprinting)
     {
-        if (animator == null) return;
-
-        Vector3 moveDirection = currentMovement;
-        moveDirection.y = 0;
-        float speed = moveDirection.magnitude;
-
-        if (Input.GetKey(KeyCode.LeftShift) && speed > 0.1f)
-        {
-            animator.SetFloat("Speed", 1f);
-        }
-        else if (speed > 0.1f)
-        {
-            animator.SetFloat("Speed", 0.5f);
-        }
-        else
-        {
-            animator.SetFloat("Speed", 0f);
-        }
+        animator.SetFloat("Speed", 2f); 
     }
+    else if (isMoving)
+    {
+        animator.SetFloat("Speed", 1f); 
+    }
+    else
+    {
+        animator.SetFloat("Speed", 0f); 
+    }
+    
+    float horizontal = Input.GetAxisRaw("Horizontal");
+    float vertical = Input.GetAxisRaw("Vertical");
+    
+    animator.SetFloat("Horizontal", horizontal);
+    animator.SetFloat("Vertical", vertical);
+}
     #endregion
 
     #region Debug
