@@ -6,23 +6,42 @@ using UnityEngine.VFX;
 
 public class ArtilleryStrike : MonoBehaviour
 {
-    [Header("UI References")]
-    public RectTransform mapPanel;
-    public RawImage mapImage;
+    [Header("Minimap Camera")]
+    public Camera minimapCamera;
+    public RawImage minimapDisplay;
+    public RenderTexture minimapRenderTexture;
     public Image targetCursor;
     public Canvas artilleryCanvas;
+    
+    [Header("Minimap Animation Settings")]
+    public RectTransform minimapPanel;
+    [Tooltip("Начальный размер минимапы")]
+    public Vector2 minimapClosedSize = new Vector2(200f, 200f);
+    [Tooltip("Развёрнутый размер минимапы")]
+    public Vector2 minimapOpenSize = new Vector2(600f, 600f);
+    [Tooltip("Начальная позиция минимапы")]
+    public Vector2 minimapClosedPosition = new Vector2(-100f, -100f);
+    [Tooltip("Развёрнутая позиция минимапы")]
+    public Vector2 minimapOpenPosition = new Vector2(0f, 0f);
+    [Tooltip("Скорость анимации (1-20, чем больше - тем быстрее)")]
+    [Range(1f, 20f)]
+    public float minimapAnimationSpeed = 8f;
+    [Tooltip("Тип интерполяции")]
+    public AnimationType animationType = AnimationType.Lerp;
+    
+    public enum AnimationType
+    {
+        Lerp,           // Линейная
+        Smoothstep,     // Плавная S-кривая
+        EaseInOut,      // Ease in-out
+        EaseOut         // Только ease out
+    }
     
     [Header("Map Icons")]
     public GameObject playerIconPrefab;
     public GameObject enemyIconPrefab;
-    public float mapUpdateInterval = 0.1f;
-    
-    [Header("Map Settings")]
-    public Vector2 mapInitialSize = new Vector2(200f, 200f);
-    public Vector2 mapExpandedSize = new Vector2(600f, 600f);
-    public Vector2 mapInitialPosition = new Vector2(-100f, -100f);
-    public Vector2 mapExpandedPosition = new Vector2(-300f, -300f);
-    public float mapScaleSpeed = 5f;
+    public float iconSize = 20f;
+    public float iconUpdateInterval = 0.1f;
     
     [Header("Strike Settings")]
     public VisualEffect strikeVFX;
@@ -35,16 +54,10 @@ public class ArtilleryStrike : MonoBehaviour
     public LayerMask enemyLayer;
     public int availableStrikes = 3;
     
-    [Header("Ship Settings")]
-    public GameObject shipPrefab;
-    public float shipSpeed = 50f;
-    public float shipHeight = 50f;
-    public float shipApproachDistance = 100f;
-    
     [Header("Bomb Settings")]
+    public float bombFallHeight = 100f;
     public float bombFallSpeed = 20f;
     public float bombExplosionDelay = 0.1f;
-    public bool useBombPhysics = false; // Отключаем физику по умолчанию для точности
     
     [Header("Animation")]
     public Animator playerAnimator;
@@ -65,25 +78,22 @@ public class ArtilleryStrike : MonoBehaviour
     public WeaponManager weaponManager;
     public Transform playerTransform;
     
-    [Header("World Bounds")]
-    public Transform worldCenter;
-    public float worldSize = 100f;
-    
     [Header("Debug")]
     public bool showDebugInfo = true;
     public bool drawGizmos = true;
     
-    public bool isSelectingTarget = false;
-    private bool isStrikeInProgress = false;
+    // Public state variables (for UI access)
+    public bool isSelectingTarget { get; private set; } = false;
+    public bool isStrikeInProgress { get; private set; } = false;
     private Vector3 selectedWorldPosition;
     private Camera mainCamera;
-    private bool isMapExpanding = false;
     private CursorLockMode previousCursorMode;
     private GameObject currentStrikeMarker;
     
     private GameObject playerIcon;
     private List<GameObject> enemyIcons = new List<GameObject>();
-    private float mapUpdateTimer = 0f;
+    private float iconUpdateTimer = 0f;
+    private Coroutine animationCoroutine;
     
     void Start()
     {
@@ -95,15 +105,18 @@ public class ArtilleryStrike : MonoBehaviour
             Debug.LogWarning("[Artillery] Player Transform не назначен, использую transform скрипта");
         }
         
+        // Настраиваем минимап камеру
+        SetupMinimapCamera();
+        
         if (artilleryCanvas != null)
         {
             artilleryCanvas.gameObject.SetActive(false);
         }
         
-        if (mapPanel != null)
+        if (minimapPanel != null)
         {
-            mapPanel.sizeDelta = mapInitialSize;
-            mapPanel.anchoredPosition = mapInitialPosition;
+            minimapPanel.sizeDelta = minimapClosedSize;
+            minimapPanel.anchoredPosition = minimapClosedPosition;
         }
         
         if (targetCursor != null)
@@ -114,8 +127,64 @@ public class ArtilleryStrike : MonoBehaviour
         if (showDebugInfo)
         {
             Debug.Log($"[Artillery] Инициализация. Доступно ударов: {availableStrikes}");
-            Debug.Log($"[Artillery] World Center: {(worldCenter != null ? worldCenter.position.ToString() : "NULL")}");
-            Debug.Log($"[Artillery] World Size: {worldSize}");
+        }
+    }
+
+    void SetupMinimapCamera()
+    {
+        // Если камера не назначена, ищем камеру с тегом "MinimapCamera"
+        if (minimapCamera == null)
+        {
+            GameObject minimapCamObj = GameObject.FindGameObjectWithTag("MinimapCamera");
+            if (minimapCamObj != null)
+            {
+                minimapCamera = minimapCamObj.GetComponent<Camera>();
+            }
+        }
+        
+        // Если всё ещё null, создаём новую камеру
+        if (minimapCamera == null)
+        {
+            GameObject camObj = new GameObject("Minimap Camera");
+            minimapCamera = camObj.AddComponent<Camera>();
+            minimapCamera.orthographic = true;
+            minimapCamera.orthographicSize = 50f;
+            minimapCamera.cullingMask = LayerMask.GetMask("Default", "Enemies", "Ground");
+            
+            if (playerTransform != null)
+            {
+                minimapCamera.transform.position = playerTransform.position + Vector3.up * 100f;
+            }
+            else
+            {
+                minimapCamera.transform.position = Vector3.up * 100f;
+            }
+            
+            minimapCamera.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+            minimapCamera.depth = -1; // Ниже основной камеры
+            minimapCamera.gameObject.tag = "MinimapCamera";
+        }
+        
+        // Создаем RenderTexture если не назначен
+        if (minimapRenderTexture == null)
+        {
+            minimapRenderTexture = new RenderTexture(512, 512, 16);
+            minimapRenderTexture.name = "MinimapRT";
+        }
+        
+        // Назначаем RenderTexture на камеру
+        minimapCamera.targetTexture = minimapRenderTexture;
+        minimapCamera.enabled = false; // Отключаем по умолчанию
+        
+        // Назначаем RenderTexture на display
+        if (minimapDisplay != null)
+        {
+            minimapDisplay.texture = minimapRenderTexture;
+        }
+        
+        if (showDebugInfo)
+        {
+            Debug.Log("[Artillery] Minimap Camera настроена");
         }
     }
 
@@ -159,7 +228,7 @@ public class ArtilleryStrike : MonoBehaviour
         isSelectingTarget = true;
         
         previousCursorMode = Cursor.lockState;
-        Cursor.lockState = CursorLockMode.None;
+        Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = true;
         
         if (playerMovement != null)
@@ -177,7 +246,18 @@ public class ArtilleryStrike : MonoBehaviour
             artilleryCanvas.gameObject.SetActive(true);
         }
         
-        StartCoroutine(AnimateMapExpand(true));
+        // Включаем минимап камеру
+        if (minimapCamera != null)
+        {
+            minimapCamera.enabled = true;
+        }
+        
+        // Анимируем открытие минимапы
+        if (animationCoroutine != null)
+        {
+            StopCoroutine(animationCoroutine);
+        }
+        animationCoroutine = StartCoroutine(AnimateMinimap(true));
         
         if (playerAnimator != null)
         {
@@ -210,51 +290,188 @@ public class ArtilleryStrike : MonoBehaviour
         }
     }
 
-    IEnumerator AnimateMapExpand(bool expand)
+    IEnumerator AnimateMinimap(bool open)
     {
-        isMapExpanding = true;
+        if (minimapPanel == null) yield break;
         
-        Vector2 targetSize = expand ? mapExpandedSize : mapInitialSize;
-        Vector2 targetPosition = expand ? mapExpandedPosition : mapInitialPosition;
+        Vector2 targetSize = open ? minimapOpenSize : minimapClosedSize;
+        Vector2 targetPosition = open ? minimapOpenPosition : minimapClosedPosition;
+        Vector2 startSize = minimapPanel.sizeDelta;
+        Vector2 startPosition = minimapPanel.anchoredPosition;
         
-        while (Vector2.Distance(mapPanel.sizeDelta, targetSize) > 1f)
+        float elapsed = 0f;
+        float duration = 1f / minimapAnimationSpeed;
+        
+        while (elapsed < duration)
         {
-            mapPanel.sizeDelta = Vector2.Lerp(mapPanel.sizeDelta, targetSize, Time.deltaTime * mapScaleSpeed);
-            mapPanel.anchoredPosition = Vector2.Lerp(mapPanel.anchoredPosition, targetPosition, Time.deltaTime * mapScaleSpeed);
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            
+            // Применяем выбранный тип интерполяции
+            float interpolatedT = GetInterpolation(t, animationType);
+            
+            minimapPanel.sizeDelta = Vector2.Lerp(startSize, targetSize, interpolatedT);
+            minimapPanel.anchoredPosition = Vector2.Lerp(startPosition, targetPosition, interpolatedT);
+            
             yield return null;
         }
         
-        mapPanel.sizeDelta = targetSize;
-        mapPanel.anchoredPosition = targetPosition;
-        
-        isMapExpanding = false;
+        minimapPanel.sizeDelta = targetSize;
+        minimapPanel.anchoredPosition = targetPosition;
+    }
+
+    float GetInterpolation(float t, AnimationType type)
+    {
+        switch (type)
+        {
+            case AnimationType.Lerp:
+                return t;
+            
+            case AnimationType.Smoothstep:
+                return t * t * (3f - 2f * t);
+            
+            case AnimationType.EaseInOut:
+                return t < 0.5f 
+                    ? 2f * t * t 
+                    : 1f - Mathf.Pow(-2f * t + 2f, 2f) / 2f;
+            
+            case AnimationType.EaseOut:
+                return 1f - (1f - t) * (1f - t);
+            
+            default:
+                return t;
+        }
     }
 
     void UpdateTargetSelection()
     {
-        if (isMapExpanding) return;
+        if (minimapDisplay == null || minimapPanel == null || minimapCamera == null)
+        {
+            if (showDebugInfo) Debug.LogWarning("[Artillery] UpdateTargetSelection: некоторые компоненты null!");
+            return;
+        }
         
+        // Получаем позицию мыши относительно минимапы
         Vector2 localPoint;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            mapPanel, 
+        bool isInsideMinimap = RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            minimapPanel, 
             Input.mousePosition, 
-            artilleryCanvas.worldCamera, 
+            artilleryCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : artilleryCanvas.worldCamera, 
             out localPoint
         );
         
+        if (showDebugInfo)
+        {
+            Debug.Log($"[Artillery] Mouse screen pos: {Input.mousePosition}, Local point: {localPoint}");
+        }
+        
+        // Проверяем, что курсор внутри минимапы
+        Rect rect = minimapPanel.rect;
+        bool cursorInBounds = rect.Contains(localPoint);
+        
+        // Ограничиваем курсор в пределах минимапы
         Vector2 clampedPoint = new Vector2(
-            Mathf.Clamp(localPoint.x, -mapPanel.sizeDelta.x / 2, mapPanel.sizeDelta.x / 2),
-            Mathf.Clamp(localPoint.y, -mapPanel.sizeDelta.y / 2, mapPanel.sizeDelta.y / 2)
+            Mathf.Clamp(localPoint.x, rect.xMin, rect.xMax),
+            Mathf.Clamp(localPoint.y, rect.yMin, rect.yMax)
         );
         
         if (targetCursor != null)
         {
             targetCursor.rectTransform.anchoredPosition = clampedPoint;
+            
+            // Визуально показываем, что курсор в пределах
+            Color cursorColor = targetCursor.color;
+            cursorColor.a = cursorInBounds ? 1f : 0.5f;
+            targetCursor.color = cursorColor;
         }
         
-        selectedWorldPosition = MapToWorldPosition(clampedPoint);
+        // Конвертируем UI координаты в мировые
+        selectedWorldPosition = MinimapToWorldPosition(clampedPoint);
+        
+        if (showDebugInfo)
+        {
+            Debug.Log($"[Artillery] ★ ОБНОВЛЕНА целевая позиция: {selectedWorldPosition}");
+        }
         
         UpdateStrikeMarker(selectedWorldPosition);
+    }
+
+    Vector3 MinimapToWorldPosition(Vector2 minimapPosition)
+    {
+        if (minimapCamera == null || minimapPanel == null)
+        {
+            return playerTransform != null ? playerTransform.position : Vector3.zero;
+        }
+        
+        Rect rect = minimapPanel.rect;
+        
+        // Нормализуем координаты минимапы (0 до 1)
+        float normalizedX = (minimapPosition.x - rect.xMin) / rect.width;
+        float normalizedY = (minimapPosition.y - rect.yMin) / rect.height;
+        
+        // ВАЖНО: Инвертируем Y, так как UI координаты идут сверху вниз
+        normalizedY = 1f - normalizedY;
+        
+        if (showDebugInfo)
+        {
+            Debug.Log($"[Artillery] Minimap pos: {minimapPosition}, Normalized: ({normalizedX}, {normalizedY})");
+        }
+        
+        // Используем минимап камеру для raycast
+        Ray ray = minimapCamera.ViewportPointToRay(new Vector3(normalizedX, normalizedY, 0));
+        RaycastHit hit;
+        
+        // Рисуем луч в режиме отладки
+        if (showDebugInfo)
+        {
+            Debug.DrawRay(ray.origin, ray.direction * 1000f, Color.yellow, 2f);
+        }
+        
+        if (Physics.Raycast(ray, out hit, 1000f))
+        {
+            if (showDebugInfo)
+            {
+                Debug.Log($"[Artillery] ✓ Raycast попал в: {hit.point} ({hit.collider.name})");
+            }
+            return hit.point;
+        }
+        
+        // Fallback: вычисляем позицию вручную на основе ортографической камеры
+        float orthoWidth = minimapCamera.orthographicSize * minimapCamera.aspect;
+        float orthoHeight = minimapCamera.orthographicSize;
+        
+        Vector3 cameraPos = minimapCamera.transform.position;
+        
+        // Учитываем поворот камеры (90 градусов вниз)
+        // X и Z зависят от того, как камера смотрит
+        float worldX = cameraPos.x + (normalizedX - 0.5f) * 2f * orthoWidth;
+        float worldZ = cameraPos.z - (normalizedY - 0.5f) * 2f * orthoHeight;
+        
+        Vector3 fallbackPos = new Vector3(worldX, 0f, worldZ);
+        
+        // Пытаемся найти точную высоту земли
+        if (Physics.Raycast(new Vector3(worldX, 1000f, worldZ), Vector3.down, out hit, 2000f))
+        {
+            fallbackPos.y = hit.point.y;
+            if (showDebugInfo)
+            {
+                Debug.Log($"[Artillery] ✓ Fallback нашёл землю на высоте: {hit.point.y}");
+            }
+        }
+        else
+        {
+            if (showDebugInfo)
+            {
+                Debug.LogWarning($"[Artillery] ✗ Fallback НЕ нашёл землю!");
+            }
+        }
+        
+        if (showDebugInfo)
+        {
+            Debug.Log($"[Artillery] → Финальная позиция: {fallbackPos}");
+        }
+        
+        return fallbackPos;
     }
 
     void UpdateStrikeMarker(Vector3 position)
@@ -272,70 +489,15 @@ public class ArtilleryStrike : MonoBehaviour
         }
     }
 
-    Vector3 MapToWorldPosition(Vector2 mapPosition)
-    {
-        // УПРОЩЕННОЕ преобразование: -1 до 1 напрямую в мировые координаты
-        float normalizedX = mapPosition.x / (mapPanel.sizeDelta.x / 2);
-        float normalizedY = mapPosition.y / (mapPanel.sizeDelta.y / 2);
-        
-        Vector3 centerPos = worldCenter != null ? worldCenter.position : Vector3.zero;
-        
-        Vector3 worldPos = new Vector3(
-            centerPos.x + (normalizedX * worldSize / 2),
-            0,
-            centerPos.z + (normalizedY * worldSize / 2)
-        );
-        
-        if (showDebugInfo)
-        {
-            Debug.Log($"[Artillery Map→World] Map({mapPosition.x:F1}, {mapPosition.y:F1}) → Norm({normalizedX:F2}, {normalizedY:F2}) → World{worldPos}");
-        }
-        
-        return worldPos;
-    }
-
-    Vector2 WorldToMapPosition(Vector3 worldPosition)
-    {
-        Vector3 centerPos = worldCenter != null ? worldCenter.position : Vector3.zero;
-        
-        // Смещение относительно центра мира
-        float offsetX = worldPosition.x - centerPos.x;
-        float offsetZ = worldPosition.z - centerPos.z;
-        
-        // Нормализация: -1 до 1
-        float normalizedX = offsetX / (worldSize / 2);
-        float normalizedY = offsetZ / (worldSize / 2);
-        
-        // Ограничиваем диапазон
-        normalizedX = Mathf.Clamp(normalizedX, -1f, 1f);
-        normalizedY = Mathf.Clamp(normalizedY, -1f, 1f);
-        
-        // Преобразуем в координаты карты
-        Vector2 mapPos = new Vector2(
-            normalizedX * (mapPanel.sizeDelta.x / 2),
-            normalizedY * (mapPanel.sizeDelta.y / 2)
-        );
-        
-        return mapPos;
-    }
-
     void CreateMapIcons()
     {
-        // Создаем иконку игрока
-        if (playerTransform != null)
+        if (playerTransform != null && playerIconPrefab != null)
         {
-            if (playerIconPrefab != null)
+            playerIcon = Instantiate(playerIconPrefab, minimapPanel);
+            RectTransform rt = playerIcon.GetComponent<RectTransform>();
+            if (rt != null)
             {
-                playerIcon = Instantiate(playerIconPrefab, mapPanel);
-            }
-            else
-            {
-                playerIcon = new GameObject("PlayerIcon");
-                playerIcon.transform.SetParent(mapPanel);
-                Image img = playerIcon.AddComponent<Image>();
-                img.color = Color.green;
-                RectTransform rt = playerIcon.GetComponent<RectTransform>();
-                rt.sizeDelta = new Vector2(20, 20);
+                rt.sizeDelta = new Vector2(iconSize, iconSize);
             }
             
             if (showDebugInfo) Debug.Log("[Artillery] Иконка игрока создана");
@@ -344,18 +506,18 @@ public class ArtilleryStrike : MonoBehaviour
 
     void UpdateMapIcons()
     {
-        mapUpdateTimer += Time.deltaTime;
-        if (mapUpdateTimer < mapUpdateInterval) return;
-        mapUpdateTimer = 0f;
+        iconUpdateTimer += Time.deltaTime;
+        if (iconUpdateTimer < iconUpdateInterval) return;
+        iconUpdateTimer = 0f;
         
         // Обновляем позицию иконки игрока
         if (playerIcon != null && playerTransform != null)
         {
-            Vector2 mapPos = WorldToMapPosition(playerTransform.position);
+            Vector2 iconPos = WorldToMinimapPosition(playerTransform.position);
             RectTransform rt = playerIcon.GetComponent<RectTransform>();
             if (rt != null)
             {
-                rt.anchoredPosition = mapPos;
+                rt.anchoredPosition = iconPos;
             }
         }
         
@@ -372,57 +534,63 @@ public class ArtilleryStrike : MonoBehaviour
         }
         enemyIcons.Clear();
         
-        // ИСПРАВЛЕНО: Используем FindObjectsOfType для поиска всех BaseEnemy
+        // Находим всех врагов
         BaseEnemy[] allEnemies = FindObjectsOfType<BaseEnemy>();
-        
-        if (showDebugInfo)
-        {
-            Debug.Log($"[Artillery] Найдено врагов через FindObjectsOfType: {allEnemies.Length}");
-        }
         
         foreach (BaseEnemy enemy in allEnemies)
         {
-            if (enemy == null || enemy.gameObject == null) continue;
+            if (enemy == null || !enemy.gameObject.activeInHierarchy) continue;
             
-            // Проверяем активность объекта вместо _isDead
-            if (!enemy.gameObject.activeInHierarchy) continue;
+            Vector2 iconPos = WorldToMinimapPosition(enemy.transform.position);
             
-            Vector2 mapPos = WorldToMapPosition(enemy.transform.position);
+            Rect rect = minimapPanel.rect;
             
-            // Проверяем что враг в пределах карты
-            if (Mathf.Abs(mapPos.x) <= mapPanel.sizeDelta.x / 2 && 
-                Mathf.Abs(mapPos.y) <= mapPanel.sizeDelta.y / 2)
+            // Проверяем что враг в пределах минимапы
+            if (rect.Contains(iconPos))
             {
-                GameObject enemyIcon;
+                GameObject enemyIcon = null;
                 
                 if (enemyIconPrefab != null)
                 {
-                    enemyIcon = Instantiate(enemyIconPrefab, mapPanel);
+                    enemyIcon = Instantiate(enemyIconPrefab, minimapPanel);
                 }
                 else
                 {
                     enemyIcon = new GameObject("EnemyIcon");
-                    enemyIcon.transform.SetParent(mapPanel);
+                    enemyIcon.transform.SetParent(minimapPanel);
                     Image img = enemyIcon.AddComponent<Image>();
                     img.color = Color.red;
                     RectTransform rt = enemyIcon.GetComponent<RectTransform>();
-                    rt.sizeDelta = new Vector2(15, 15);
+                    rt.sizeDelta = new Vector2(iconSize * 0.75f, iconSize * 0.75f);
                 }
                 
                 RectTransform iconRT = enemyIcon.GetComponent<RectTransform>();
                 if (iconRT != null)
                 {
-                    iconRT.anchoredPosition = mapPos;
+                    iconRT.anchoredPosition = iconPos;
                 }
                 
                 enemyIcons.Add(enemyIcon);
             }
         }
+    }
+
+    Vector2 WorldToMinimapPosition(Vector3 worldPosition)
+    {
+        if (minimapCamera == null || minimapPanel == null) return Vector2.zero;
         
-        if (showDebugInfo)
-        {
-            Debug.Log($"[Artillery] Иконок врагов на карте: {enemyIcons.Count}");
-        }
+        // Конвертируем мировую позицию в viewport координаты минимап камеры
+        Vector3 viewportPos = minimapCamera.WorldToViewportPoint(worldPosition);
+        
+        Rect rect = minimapPanel.rect;
+        
+        // Конвертируем viewport (0-1) в координаты минимапы
+        Vector2 minimapPos = new Vector2(
+            rect.xMin + viewportPos.x * rect.width,
+            rect.yMin + viewportPos.y * rect.height
+        );
+        
+        return minimapPos;
     }
 
     void ClearMapIcons()
@@ -442,7 +610,25 @@ public class ArtilleryStrike : MonoBehaviour
 
     void ConfirmStrike()
     {
-        if (isMapExpanding) return;
+        // ВАЖНО: Обновляем позицию ПЕРЕД подтверждением
+        if (minimapPanel != null && minimapCamera != null)
+        {
+            Vector2 localPoint;
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                minimapPanel, 
+                Input.mousePosition, 
+                artilleryCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : artilleryCanvas.worldCamera, 
+                out localPoint
+            );
+            
+            Rect rect = minimapPanel.rect;
+            Vector2 clampedPoint = new Vector2(
+                Mathf.Clamp(localPoint.x, rect.xMin, rect.xMax),
+                Mathf.Clamp(localPoint.y, rect.yMin, rect.yMax)
+            );
+            
+            selectedWorldPosition = MinimapToWorldPosition(clampedPoint);
+        }
         
         isSelectingTarget = false;
         availableStrikes--;
@@ -450,7 +636,7 @@ public class ArtilleryStrike : MonoBehaviour
         if (showDebugInfo)
         {
             Debug.Log($"[Artillery] ========== УДАР ПОДТВЕРЖДЁН ==========");
-            Debug.Log($"[Artillery] Целевая позиция: {selectedWorldPosition}");
+            Debug.Log($"[Artillery] ★★★ ФИНАЛЬНАЯ целевая позиция: {selectedWorldPosition} ★★★");
             Debug.Log($"[Artillery] Оставшиеся удары: {availableStrikes}");
         }
         
@@ -459,7 +645,12 @@ public class ArtilleryStrike : MonoBehaviour
             audioSource.PlayOneShot(confirmSound);
         }
         
-        StartCoroutine(AnimateMapExpand(false));
+        // Анимируем закрытие минимапы
+        if (animationCoroutine != null)
+        {
+            StopCoroutine(animationCoroutine);
+        }
+        animationCoroutine = StartCoroutine(AnimateMinimap(false));
         
         if (targetCursor != null)
         {
@@ -472,6 +663,12 @@ public class ArtilleryStrike : MonoBehaviour
         }
         
         ClearMapIcons();
+        
+        // Отключаем минимап камеру
+        if (minimapCamera != null)
+        {
+            minimapCamera.enabled = false;
+        }
         
         StartCoroutine(ReturnControlToPlayer());
         StartCoroutine(ExecuteStrike(selectedWorldPosition));
@@ -481,7 +678,11 @@ public class ArtilleryStrike : MonoBehaviour
     {
         isSelectingTarget = false;
         
-        StartCoroutine(AnimateMapExpand(false));
+        if (animationCoroutine != null)
+        {
+            StopCoroutine(animationCoroutine);
+        }
+        animationCoroutine = StartCoroutine(AnimateMinimap(false));
         
         if (targetCursor != null)
         {
@@ -494,6 +695,11 @@ public class ArtilleryStrike : MonoBehaviour
         }
         
         ClearMapIcons();
+        
+        if (minimapCamera != null)
+        {
+            minimapCamera.enabled = false;
+        }
         
         StartCoroutine(ReturnControlToPlayer());
         
@@ -535,7 +741,7 @@ public class ArtilleryStrike : MonoBehaviour
         if (showDebugInfo)
         {
             Debug.Log($"[Artillery] ===== НАЧАЛО УДАРА =====");
-            Debug.Log($"[Artillery] ФИНАЛЬНАЯ цель: {targetPosition}");
+            Debug.Log($"[Artillery] ★★★ Цель удара В EXECUTE: {targetPosition} ★★★");
         }
         
         if (audioSource != null && incomingSound != null)
@@ -543,115 +749,37 @@ public class ArtilleryStrike : MonoBehaviour
             audioSource.PlayOneShot(incomingSound);
         }
         
-        // УПРОЩЕНО: Корабль летит справа налево (или слева направо)
-        Vector3 approachDirection = Vector3.right;
-        Vector3 shipStartPos = targetPosition - (approachDirection * shipApproachDistance) + Vector3.up * shipHeight;
-        Vector3 shipEndPos = targetPosition + (approachDirection * shipApproachDistance) + Vector3.up * shipHeight;
+        yield return new WaitForSeconds(strikeDelay);
+        
+        // Прямой сброс бомбы на цель
+        Vector3 dropPosition = targetPosition + Vector3.up * bombFallHeight;
         
         if (showDebugInfo)
         {
-            Debug.Log($"[Artillery] Корабль летит от {shipStartPos} до {shipEndPos}");
-            Debug.Log($"[Artillery] Расстояние полёта: {Vector3.Distance(shipStartPos, shipEndPos):F1}м");
+            Debug.Log($"[Artillery] Сброс бомбы с позиции: {dropPosition}");
+            Debug.Log($"[Artillery] На цель: {targetPosition}");
         }
         
-        GameObject ship = null;
-        GameObject shipSpawnPoint = null;
-        GameObject bombSpawnPoint = null;
+        StartCoroutine(DropBomb(targetPosition, dropPosition));
         
-        if (shipPrefab != null)
-        {
-            Quaternion shipRotation = Quaternion.LookRotation(approachDirection);
-            ship = Instantiate(shipPrefab, shipStartPos, shipRotation);
-            
-            // ДОБАВЛЕНО: Создаем spawn points на корабле автоматически
-            shipSpawnPoint = new GameObject("ShipSpawnPoint");
-            shipSpawnPoint.transform.SetParent(ship.transform);
-            shipSpawnPoint.transform.localPosition = Vector3.zero;
-            
-            bombSpawnPoint = new GameObject("BombSpawnPoint");
-            bombSpawnPoint.transform.SetParent(ship.transform);
-            bombSpawnPoint.transform.localPosition = new Vector3(0, -2f, 0); // Чуть ниже корабля
-            
-            if (showDebugInfo) Debug.Log($"[Artillery] Корабль создан с spawn points");
-        }
-        else
-        {
-            Debug.LogError("[Artillery] Ship Prefab не назначен!");
-        }
-        
-        float travelTime = (shipApproachDistance * 2) / shipSpeed;
-        float elapsedTime = 0f;
-        bool bombDropped = false;
-        
-        while (elapsedTime < travelTime)
-        {
-            elapsedTime += Time.deltaTime;
-            float t = elapsedTime / travelTime;
-            
-            if (ship != null)
-            {
-                ship.transform.position = Vector3.Lerp(shipStartPos, shipEndPos, t);
-            }
-            
-            // ИСПРАВЛЕНО: Сбрасываем бомбу точно когда корабль над целью
-            if (t >= 0.5f && !bombDropped && bombSpawnPoint != null)
-            {
-                bombDropped = true;
-                if (showDebugInfo)
-                {
-                    Debug.Log($"[Artillery] СБРОС БОМБЫ!");
-                    Debug.Log($"[Artillery] Позиция корабля: {ship.transform.position}");
-                    Debug.Log($"[Artillery] Позиция spawn point: {bombSpawnPoint.transform.position}");
-                    Debug.Log($"[Artillery] Цель на земле: {targetPosition}");
-                }
-                StartCoroutine(DropBomb(targetPosition, bombSpawnPoint));
-            }
-            
-            yield return null;
-        }
-        
-        if (showDebugInfo) Debug.Log("[Artillery] Корабль завершил полёт");
-        
-        if (ship != null)
-        {
-            Destroy(ship, 2f);
-        }
+        yield return new WaitForSeconds(2f);
         
         isStrikeInProgress = false;
         if (showDebugInfo) Debug.Log($"[Artillery] ===== КОНЕЦ УДАРА =====");
     }
 
-    IEnumerator DropBomb(Vector3 targetPosition, GameObject spawnPoint)
+    IEnumerator DropBomb(Vector3 targetPosition, Vector3 dropPosition)
     {
-        // УПРОЩЕНО: Бомба стартует из spawn point корабля
-        Vector3 bombStartPos = spawnPoint != null ? spawnPoint.transform.position : targetPosition + Vector3.up * shipHeight;
-        
-        if (showDebugInfo)
-        {
-            Debug.Log($"[Artillery] --- Падение бомбы ---");
-            Debug.Log($"[Artillery] Старт бомбы: {bombStartPos}");
-            Debug.Log($"[Artillery] Финиш бомбы: {targetPosition}");
-            Debug.Log($"[Artillery] Расстояние падения: {Vector3.Distance(bombStartPos, targetPosition):F1}м");
-        }
-        
         GameObject bomb = null;
         
         if (bombPrefab != null)
         {
-            bomb = Instantiate(bombPrefab, bombStartPos, Quaternion.identity);
-            
-            if (useBombPhysics)
-            {
-                Rigidbody rb = bomb.GetComponent<Rigidbody>();
-                if (rb == null) rb = bomb.AddComponent<Rigidbody>();
-                rb.useGravity = true;
-                rb.drag = 0.5f;
-            }
+            bomb = Instantiate(bombPrefab, dropPosition, Quaternion.identity);
         }
         else
         {
             bomb = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            bomb.transform.position = bombStartPos;
+            bomb.transform.position = dropPosition;
             bomb.transform.localScale = Vector3.one * 0.5f;
             bomb.GetComponent<Renderer>().material.color = Color.red;
         }
@@ -661,38 +789,31 @@ public class ArtilleryStrike : MonoBehaviour
             audioSource.PlayOneShot(bombWhistleSound);
         }
         
-        // Анимированное падение (для точности)
-        float fallDistance = bombStartPos.y - targetPosition.y;
+        // Прямое падение на цель
+        float fallDistance = dropPosition.y - targetPosition.y;
         float fallTime = fallDistance / bombFallSpeed;
         float elapsed = 0f;
-        
-        Vector3 startPos = bombStartPos;
         
         while (elapsed < fallTime && bomb != null)
         {
             elapsed += Time.deltaTime;
             float t = elapsed / fallTime;
             
-            // Прямое движение к цели
-            bomb.transform.position = Vector3.Lerp(startPos, targetPosition, t);
+            bomb.transform.position = Vector3.Lerp(dropPosition, targetPosition, t);
             
             yield return null;
         }
         
-        // Финальная позиция - ТОЧНО цель
-        Vector3 finalImpactPos = targetPosition;
-        
         if (showDebugInfo)
         {
-            Debug.Log($"[Artillery] Бомба достигла цели!");
-            Debug.Log($"[Artillery] Финальная позиция удара: {finalImpactPos}");
+            Debug.Log($"[Artillery] Бомба достигла цели: {targetPosition}");
         }
         
         if (bomb != null) Destroy(bomb);
         
         yield return new WaitForSeconds(bombExplosionDelay);
         
-        SpawnExplosion(finalImpactPos);
+        SpawnExplosion(targetPosition);
     }
 
     void SpawnExplosion(Vector3 position)
@@ -715,14 +836,6 @@ public class ArtilleryStrike : MonoBehaviour
             if (ps != null) ps.Play();
             
             Destroy(vfxObject, 5f);
-        }
-        else
-        {
-            GameObject tempExplosion = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            tempExplosion.transform.position = position;
-            tempExplosion.transform.localScale = Vector3.one * strikeRadius * 2;
-            tempExplosion.GetComponent<Renderer>().material.color = new Color(1f, 0.5f, 0f, 0.5f);
-            Destroy(tempExplosion, 1f);
         }
         
         if (audioSource != null && explosionSound != null)
@@ -774,13 +887,7 @@ public class ArtilleryStrike : MonoBehaviour
             Gizmos.DrawWireSphere(selectedWorldPosition, strikeRadius);
             
             Gizmos.color = Color.yellow;
-            Gizmos.DrawLine(selectedWorldPosition, selectedWorldPosition + Vector3.up * 50);
-        }
-        
-        if (worldCenter != null)
-        {
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawWireCube(worldCenter.position, new Vector3(worldSize, 1, worldSize));
+            Gizmos.DrawLine(selectedWorldPosition, selectedWorldPosition + Vector3.up * bombFallHeight);
         }
     }
 }
