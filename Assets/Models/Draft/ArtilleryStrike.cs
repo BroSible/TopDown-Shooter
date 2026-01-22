@@ -37,12 +37,6 @@ public class ArtilleryStrike : MonoBehaviour
         EaseOut         
     }
     
-    [Header("Map Icons")]
-    public GameObject playerIconPrefab;
-    public GameObject enemyIconPrefab;
-    public float iconSize = 20f;
-    public float iconUpdateInterval = 0.1f;
-    
     [Header("Strike Settings")]
     public VisualEffect strikeVFX;
     public GameObject strikeVFXPrefab;
@@ -88,10 +82,6 @@ public class ArtilleryStrike : MonoBehaviour
     private Camera mainCamera;
     private CursorLockMode previousCursorMode;
     private GameObject currentStrikeMarker;
-    
-    private GameObject playerIcon;
-    private List<GameObject> enemyIcons = new List<GameObject>();
-    private float iconUpdateTimer = 0f;
     private Coroutine animationCoroutine;
     
     void Start()
@@ -157,7 +147,7 @@ public class ArtilleryStrike : MonoBehaviour
             }
             
             minimapCamera.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
-            minimapCamera.depth = -1; // Ниже основной камеры
+            minimapCamera.depth = -1;
             minimapCamera.gameObject.tag = "MinimapCamera";
         }
         
@@ -202,7 +192,6 @@ public class ArtilleryStrike : MonoBehaviour
         if (isSelectingTarget)
         {
             UpdateTargetSelection();
-            UpdateMapIcons();
             
             if (Input.GetMouseButtonDown(0))
             {
@@ -265,8 +254,6 @@ public class ArtilleryStrike : MonoBehaviour
         {
             audioSource.PlayOneShot(callStrikeSound);
         }
-        
-        CreateMapIcons();
         
         if (showDebugInfo) Debug.Log("[Artillery] Режим выбора цели активирован");
     }
@@ -422,7 +409,6 @@ public class ArtilleryStrike : MonoBehaviour
         
         Vector3 cameraPos = minimapCamera.transform.position;
         
-
         float worldX = cameraPos.x + (normalizedX - 0.5f) * 2f * orthoWidth;
         float worldZ = cameraPos.z - (normalizedY - 0.5f) * 2f * orthoHeight;
         
@@ -465,118 +451,6 @@ public class ArtilleryStrike : MonoBehaviour
                 currentStrikeMarker.transform.position = position;
             }
         }
-    }
-
-    void CreateMapIcons()
-    {
-        if (playerTransform != null && playerIconPrefab != null)
-        {
-            playerIcon = Instantiate(playerIconPrefab, minimapPanel);
-            RectTransform rt = playerIcon.GetComponent<RectTransform>();
-            if (rt != null)
-            {
-                rt.sizeDelta = new Vector2(iconSize, iconSize);
-            }
-            
-            if (showDebugInfo) Debug.Log("[Artillery] Иконка игрока создана");
-        }
-    }
-
-    void UpdateMapIcons()
-    {
-        iconUpdateTimer += Time.deltaTime;
-        if (iconUpdateTimer < iconUpdateInterval) return;
-        iconUpdateTimer = 0f;
-        
-        if (playerIcon != null && playerTransform != null)
-        {
-            Vector2 iconPos = WorldToMinimapPosition(playerTransform.position);
-            RectTransform rt = playerIcon.GetComponent<RectTransform>();
-            if (rt != null)
-            {
-                rt.anchoredPosition = iconPos;
-            }
-        }
-        
-        UpdateEnemyIcons();
-    }
-
-    void UpdateEnemyIcons()
-    {
-        foreach (GameObject icon in enemyIcons)
-        {
-            if (icon != null) Destroy(icon);
-        }
-        enemyIcons.Clear();
-        
-        BaseEnemy[] allEnemies = FindObjectsOfType<BaseEnemy>();
-        
-        foreach (BaseEnemy enemy in allEnemies)
-        {
-            if (enemy == null || !enemy.gameObject.activeInHierarchy) continue;
-            
-            Vector2 iconPos = WorldToMinimapPosition(enemy.transform.position);
-            
-            Rect rect = minimapPanel.rect;
-            
-            if (rect.Contains(iconPos))
-            {
-                GameObject enemyIcon = null;
-                
-                if (enemyIconPrefab != null)
-                {
-                    enemyIcon = Instantiate(enemyIconPrefab, minimapPanel);
-                }
-                else
-                {
-                    enemyIcon = new GameObject("EnemyIcon");
-                    enemyIcon.transform.SetParent(minimapPanel);
-                    Image img = enemyIcon.AddComponent<Image>();
-                    img.color = Color.red;
-                    RectTransform rt = enemyIcon.GetComponent<RectTransform>();
-                    rt.sizeDelta = new Vector2(iconSize * 0.75f, iconSize * 0.75f);
-                }
-                
-                RectTransform iconRT = enemyIcon.GetComponent<RectTransform>();
-                if (iconRT != null)
-                {
-                    iconRT.anchoredPosition = iconPos;
-                }
-                
-                enemyIcons.Add(enemyIcon);
-            }
-        }
-    }
-
-    Vector2 WorldToMinimapPosition(Vector3 worldPosition)
-    {
-        if (minimapCamera == null || minimapPanel == null) return Vector2.zero;
-        
-        Vector3 viewportPos = minimapCamera.WorldToViewportPoint(worldPosition);
-        
-        Rect rect = minimapPanel.rect;
-        
-        Vector2 minimapPos = new Vector2(
-            rect.xMin + viewportPos.x * rect.width,
-            rect.yMin + viewportPos.y * rect.height
-        );
-        
-        return minimapPos;
-    }
-
-    void ClearMapIcons()
-    {
-        if (playerIcon != null)
-        {
-            Destroy(playerIcon);
-            playerIcon = null;
-        }
-        
-        foreach (GameObject icon in enemyIcons)
-        {
-            if (icon != null) Destroy(icon);
-        }
-        enemyIcons.Clear();
     }
 
     void ConfirmStrike()
@@ -631,9 +505,6 @@ public class ArtilleryStrike : MonoBehaviour
             Destroy(currentStrikeMarker);
         }
         
-        ClearMapIcons();
-        
-
         if (minimapCamera != null)
         {
             minimapCamera.enabled = false;
@@ -662,8 +533,6 @@ public class ArtilleryStrike : MonoBehaviour
         {
             Destroy(currentStrikeMarker);
         }
-        
-        ClearMapIcons();
         
         if (minimapCamera != null)
         {
@@ -720,7 +589,6 @@ public class ArtilleryStrike : MonoBehaviour
         
         yield return new WaitForSeconds(strikeDelay);
         
-        // Прямой сброс бомбы на цель
         Vector3 dropPosition = targetPosition + Vector3.up * bombFallHeight;
         
         if (showDebugInfo)
@@ -786,7 +654,7 @@ public class ArtilleryStrike : MonoBehaviour
 
     void SpawnExplosion(Vector3 position)
     {
-        if (showDebugInfo) Debug.Log($"[Artillery] 💥 ВЗРЫВ на позиции: {position}");
+        if (showDebugInfo) Debug.Log($"[Artillery] ВЗРЫВ на позиции: {position}");
         
         if (strikeVFX != null)
         {
